@@ -7,7 +7,7 @@ syntax keyword reasonBoolean true false
 
 " Keywords
 syntax keyword reasonKeyword let val rec nonrec type external mutable
-syntax keyword reasonKeyword if else switch fun
+syntax keyword reasonKeyword if else switch fun when
 syntax keyword reasonKeyword and as open include module
 syntax keyword reasonKeyword for to downto while
 syntax keyword reasonKeyword try exception assert

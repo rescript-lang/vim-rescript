@@ -7,7 +7,7 @@ syntax keyword bsBoolean true false
 
 " Keywords
 syntax keyword bsKeyword let val rec nonrec type external mutable
-syntax keyword bsKeyword if else switch fun
+syntax keyword bsKeyword if else switch when fun
 syntax keyword bsKeyword and as open include module
 syntax keyword bsKeyword for to downto while
 syntax keyword bsKeyword try catch exception assert
