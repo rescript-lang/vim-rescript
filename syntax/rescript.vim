@@ -54,7 +54,7 @@ syntax match resArrowPipe "\v\@\@"
 
 " Comment
 syntax region resComment start="//" end="$" contains=resTodo,@Spell
-syntax region resComment start="/\*\s*" end="\*/" contains=@Spell,resComment,resTodo
+syntax region resComment start="/\*\s*" end="\*/" contains=@Spell,resTodo
 
 syntax keyword resTodo contained TODO FIXME XXX NOTE
 
