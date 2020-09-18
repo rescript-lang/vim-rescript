@@ -48,8 +48,8 @@ function! RescriptIndent(lnum)
 
   let l:ind = l:previ
 
-  if l:prevl =~ '[({\[]\s*$'
-    " Opened a block
+  if l:prevl =~ '\v(\(|\{|\[|\=|\=\>)\s*$'
+    " Opened a block, assignment, fat arrow
     let l:ind += shiftwidth()
   endif
 
