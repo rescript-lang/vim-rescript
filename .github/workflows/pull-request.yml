@@ -1,0 +1,24 @@
+# Inspired by: https://github.com/lervag/vimtex/blob/master/.github/workflows/main.yml
+name: Test
+on: [pull_request]
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install packages
+        run: |
+          sudo add-apt-repository ppa:neovim-ppa/stable
+          sudo apt update
+          sudo apt install neovim
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - name: Test with neovim
+        run: |
+          nvim --version
+          vim --version
+          make test
