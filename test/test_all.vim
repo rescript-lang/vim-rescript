@@ -88,9 +88,9 @@ endfunction
 " Call all the tests
 call InitTest()
 
-"call FormatSuccessTest("should-format")
+call FormatSuccessTest("should-format")
 
-"call FormatErrorTest("let-binding")
+call FormatErrorTest("let-binding")
 call FormatErrorTest("spread")
 call FormatErrorTest("weird-numbers")
 
