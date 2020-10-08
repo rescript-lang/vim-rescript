@@ -43,3 +43,7 @@ autocmd FileType rescript nnoremap <buffer> <localleader>r :RescriptFormat<CR>
 - Clone the repo
 - `npm install` dependencies
 - `make test` to run the tests
+
+## Credits
+
+- [amirales](https://github.com/amiralies): Started the plugin w/ syntax & indent functionality
