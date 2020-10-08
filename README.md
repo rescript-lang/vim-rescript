@@ -15,13 +15,19 @@ Plugin manager examples:
 
 ```viml
 " Using vim-plug
-Plug 'amiralies/vim-rescript'
+Plug 'ryyppy/vim-rescript'
 
 " Using Vundle
-Plugin 'amiralies/vim-rescript'
+Plugin 'ryyppy/vim-rescript'
 
 " Using NeoBundle
-NeoBundle 'amiralies/vim-rescript'
+NeoBundle 'ryyppy/vim-rescript'
+```
+## Commands
+
+```
+:RescriptFormat
+  Formats the current buffer
 ```
 
 ## Key Mappings
@@ -29,7 +35,7 @@ NeoBundle 'amiralies/vim-rescript'
 This plugin doesn't come with builtin keymappings. This section should give you an idea on how to create your own keybindings.
 
 ```viml
-autocmd FileType rescript nnoremap <buffer> <localleader>r :call rescript#Format()<CR>
+autocmd FileType rescript nnoremap <buffer> <localleader>r :RescriptFormat<CR>
 ```
 
 ## Development
