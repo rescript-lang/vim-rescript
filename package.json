@@ -1,0 +1,23 @@
+{
+  "name": "vim-rescript",
+  "version": "1.0.0",
+  "description": "## Features",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryyppy/vim-rescript.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryyppy/vim-rescript/issues"
+  },
+  "homepage": "https://github.com/ryyppy/vim-rescript#readme",
+  "dependencies": {
+    "bs-platform": "^8.2.0"
+  }
+}
