@@ -6,6 +6,7 @@
 - Filetype detection for `.res`, `.resi`
 - Basic automatic indentation
 - Formatting `.res` files
+- Utility commands for building your project
 
 ## Installation
 
@@ -28,14 +29,30 @@ NeoBundle 'ryyppy/vim-rescript'
 ```
 :RescriptFormat
   Formats the current buffer
+
+:RescriptBuild
+  [Experimental] builds your current project
+
+:RescriptTypeHint
+  [Experimental] Uses the g:rescript_type_hint_bin executable to extract type information of the current file and displays the right type hint for the current cursor position
+
+:RescriptInfo
+  [Experimental] Opens a preview buffer with the current rescript plugin state
 ```
+
+## Type Hint Window
+
+This plugin uses a preview buffer to render madk
 
 ## Key Mappings
 
-This plugin doesn't come with builtin keymappings. This section should give you an idea on how to create your own keybindings.
-
 ```viml
-autocmd FileType rescript nnoremap <buffer> <localleader>r :RescriptFormat<CR>
+" Note that <buffer> allows us to use different commands with the same keybindings depending
+" on the filetype. This is useful if to override your e.g. ALE bindings while working on
+" ReScript projects.
+autocmd FileType rescript nnoremap <silent> <buffer> <localleader>r :RescriptFormat<CR>
+autocmd FileType rescript nnoremap <silent> <buffer> <localleader>t :RescriptTypeHint<CR>
+autocmd FileType rescript nnoremap <silent> <buffer> <localleader>b :RescriptBuild<CR>
 ```
 
 ## Development
@@ -43,6 +60,8 @@ autocmd FileType rescript nnoremap <buffer> <localleader>r :RescriptFormat<CR>
 - Clone the repo
 - `npm install` dependencies
 - `make test` to run the tests
+
+For all the specs about editor integration & the ReScript platform, check out the [CONTRIBUTING](https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md) file of the rescript-vscode reference implementation.
 
 ## Credits
 
