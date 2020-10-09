@@ -1,0 +1,55 @@
+rescript.txt 	VIM plugin for the ReScript programming language
+
+ ____      ____            _       _    ~
+|  _ \ ___/ ___|  ___ _ __(_)_ __ | |_  ~
+| |_) / _ \___ \ / __| '__| | '_ \| __| ~
+|  _ <  __/___) | (__| |  | | |_) | |_  ~
+|_| \_\___|____/ \___|_|  |_| .__/ \__| ~
+                            |_|         ~
+
+
+Main Website: <https://rescript-lang.org/>
+Plugin Website: <https://github.com/rescript-lang/vim-rescript>
+
+===============================================================================
+CONTENTS                                                             *rescript*
+
+	    Intro ......................... |rescript-introduction|
+	   Config ......................... |rescript-config|
+	 Commands ......................... |rescript-commands|
+
+
+===============================================================================
+INTRODUCTION                                            *rescript-introduction*
+
+This plugin provides important features to work on ReScript projects, such as:
+
+- Syntax highlighting
+- Code formatting
+- Type hints
+- Goto Definition
+
+Compatibility:
+This plugin is guaranteed to work with `bs-platform@8.2` and above.
+
+Please make sure to install your project dependencies. The plugin will look
+for the nearest node_modules folder to get access to the ReScript toolchain.
+
+
+===============================================================================
+CONFIG                                                        *rescript-config*
+
+
+
+===============================================================================
+COMMANDS                                                    *rescript-commands*
+
+*:RescriptFormat*
+
+  Formats the current buffer. In case of an error, it will open a quickfix
+  window with all the syntax errors. See |:cfirst| |:cnext| |:cprev| for quick
+  error navigation
+
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:
