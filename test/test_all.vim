@@ -13,7 +13,7 @@ nnoremap q :qall!<cr>
 function! s:FormatErrorsToStrings(errors)
   let l:ret = []
   for l:err in a:errors
-    let str = l:err.filename . " " . l:err.lnum . ":" . l:err.col . " -> " . l:err.text
+    let str = l:err.filename . ":" . l:err.lnum . ":" . l:err.col . " -> [" . l:err.type . "] " . l:err.text
     let l:ret = add(l:ret, str)
   endfor
 
@@ -85,14 +85,51 @@ function! FormatSuccessTest(fixtureName)
   execute 'bd!' l:resFile 
 endfunction
 
-" Call all the tests
+function! CompilerErrorParserTest(fixtureName,...)
+  " This test should successfully parse compiler generated warning and error
+  " messages
+  " fixtureName: name of the file in test/fixtures/compiler; e.g. 'compiler-log'
+  " writeFixture: bool. If 1, write a new fixture file
+  let writeFixture= get(a:, 1, 0)
+
+  let l:inputFile = "test/fixtures/compiler/" . a:fixtureName . ".txt"
+  let l:expFile = "test/fixtures/compiler/" . a:fixtureName . ".exp"
+
+  let l:output = readfile(inputFile)
+  let logEntries = rescript#parsing#ParseCompilerLogEntries(l:output)
+
+  let ret = rescript#parsing#ParseCompilerErrorOutput(logEntries[0])
+
+  let allErrors = []
+
+  for item in logEntries
+    let ret = rescript#parsing#ParseCompilerErrorOutput(item)
+    let allErrors = allErrors + ret
+  endfor
+
+  if writeFixture == 1
+    echo "WRITING NEW FIXTURE FILE: " . l:expFile
+    let out = s:FormatErrorsToStrings(allErrors)
+    call writefile(out, l:expFile)
+  endif
+
+  let exp = readfile(l:expFile)
+  let actual = s:FormatErrorsToStrings(allErrors)
+
+  call assert_equal(exp, actual, l:inputFile . " and " . l:expFile . " do not match")
+endfunction
+
+" Init tests
 call InitTest()
 
+" Formatting tests
 call FormatSuccessTest("should-format")
-
 call FormatErrorTest("let-binding")
 call FormatErrorTest("spread")
 call FormatErrorTest("weird-numbers")
+
+" Compiler error parsing tests
+call CompilerErrorParserTest("compiler-log")
 
 if len(v:errors) > 0
   echo printf(len(v:errors) . " tests failed\n")
