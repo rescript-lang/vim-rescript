@@ -219,15 +219,36 @@ function! rescript#BuildProject()
 
   if v:shell_error ==? 0
     echo "Build successfully"
+
+    " Clear out qf list in case a previous build errors were fixed
+    let s:got_build_err = 0
+    call setqflist([])
+    cclose
   else
     let compilerLogFile = g:rescript_project_root . "/lib/bs/.compiler.log" 
-    echo compilerLogFile
 
     let lines = readfile(compilerLogFile)
-    if !empty(lines)
-      call s:ShowInPreview("compiler-log", "text", lines)
+    let l:entries = rescript#parsing#ParseCompilerLogEntries(lines)
+    if !empty(l:entries)
+      let l:last = l:entries[len(l:entries)-1]
+      let l:errors = rescript#parsing#ParseCompilerErrorOutput(l:last)
+
+      if !empty(l:errors)
+        call setqflist(l:errors, 'r')
+        botright cwindow
+        cfirst
+      endif
+
+      let s:got_build_err = 1
+      echohl Error | echomsg "ReScript build failed." | echohl None
     endif
-    echohl Error | echomsg "ReScript build failed." | echohl None
+
+  endif
+
+  if s:got_build_err ==? 1
+    return { 'has_error': 1, 'errors': l:errors }
+  else
+    return { 'has_error': 0, 'errors': [] }
   endif
 endfunction
 

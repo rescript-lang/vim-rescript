@@ -182,8 +182,8 @@ function! rescript#parsing#ParseCompilerErrorOutput(lines)
 
     endif
     let l:i += 1
-
   endwhile
+
   return ret
 endfunction
 
@@ -220,5 +220,4 @@ function! rescript#parsing#ParseCompilerLogEntries(lines)
   endwhile
 
   return ret
-
 endfunction
