@@ -98,8 +98,6 @@ function! CompilerErrorParserTest(fixtureName,...)
   let l:output = readfile(inputFile)
   let logEntries = rescript#parsing#ParseCompilerLogEntries(l:output)
 
-  let ret = rescript#parsing#ParseCompilerErrorOutput(logEntries[0])
-
   let allErrors = []
 
   for item in logEntries

@@ -1,1 +1,1 @@
-test/fixtures/weird-numbers.res:10:4 -> [E] Did you forget a `)` here?
+test/fixtures/weird-numbers.res:10:4 -> [E] (Syntax) Did you forget a `)` here?

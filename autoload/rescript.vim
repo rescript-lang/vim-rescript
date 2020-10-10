@@ -112,9 +112,12 @@ function! rescript#Format()
   else
     let l:stderr = readfile(l:stderr_tmpname)
 
-    let l:errors = rescript#parsing#ParseSyntaxParserOutput(l:stderr, @%)
+    let l:errors = rescript#parsing#ParseCompilerErrorOutput(l:stderr)
 
     if !empty(l:errors)
+      for l:err in l:errors
+        let l:err.filename = @%
+      endfor
       call setqflist(l:errors, 'r')
       botright cwindow
       cfirst
@@ -180,7 +183,6 @@ function! rescript#TypeHint()
     endif
   endfor
 
-  echo string(l:json)
   if exists("l:match")
     if get(l:match, "hover") != 0
       let md_content = matchstr(l:match.hover, '```\zs.\{-}\ze```')
@@ -234,9 +236,24 @@ function! rescript#BuildProject()
       let l:errors = rescript#parsing#ParseCompilerErrorOutput(l:last)
 
       if !empty(l:errors)
+        let i = 0
+        let errNum = -1
+        while i < len(l:errors)
+          let l:err = l:errors[i]
+          if l:err.filename ==# expand("%:p")
+            " cc is 1 based
+            let errNum = i + 1
+            break
+          endif
+          let i = i + 1
+        endwhile
         call setqflist(l:errors, 'r')
         botright cwindow
-        cfirst
+        if errNum > -1
+          execute ":cc " . errNum
+        else
+          cfirst
+        endif
       endif
 
       let s:got_build_err = 1

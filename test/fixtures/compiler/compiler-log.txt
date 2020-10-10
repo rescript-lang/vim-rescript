@@ -1,5 +1,16 @@
 #Start(1402242571131)
 
+  Syntax error!
+  /Users/ryyppy/Projects/reason-association/vim-rescript/src/foo.res:12:6
+
+  10 │ let f = "test"
+  11 │
+  12 │ let z;
+  13 │
+
+  Did you forget a `=` here?
+
+
   Warning number 20 
   /Users/rescript/Projects/vim-rescript/src/Text.res:47:11-25
   
