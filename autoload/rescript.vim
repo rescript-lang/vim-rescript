@@ -42,6 +42,7 @@ function! rescript#Init()
 
   " Needed for state tracking of the formatting error state
   let s:got_format_err = 0
+  let s:got_build_err = 0
 
 
   if !exists("g:rescript_type_hint_bin")
@@ -49,7 +50,9 @@ function! rescript#Init()
   endif
 
 
-  let g:rescript_project_config = findfile("bsconfig.json", ".;")
+  " Not sure why, but adding a ".;" doesn't find bsconfig when
+  " the editor was started without a specific file within the project
+  let g:rescript_project_config = findfile("bsconfig.json")
 
   " Try to find the nearest .git folder instead
   if g:rescript_project_config == ""
