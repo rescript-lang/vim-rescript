@@ -108,6 +108,9 @@ function! rescript#Format()
     call s:DeleteLines(len(l:out), line('$'))
     call setline(1, l:out) 
 
+    " Make sure syntax highlighting doesn't break
+    syntax sync fromstart
+
     " Clear out location list in case a previous syntax error was fixed
     let s:got_format_err = 0
     call setqflist([])
@@ -187,12 +190,7 @@ function! rescript#TypeHint()
   endfor
 
   if exists("l:match")
-    if get(l:match, "hover") != 0
-      let md_content = matchstr(l:match.hover, '```\zs.\{-}\ze```')
-      if md_content == ""
-        let md_content = l:match.hover
-      endif
-
+    if get(l:match, "hover", "") != ""
       let md_content = l:match.hover
 
       let text = split(md_content, "\n")
