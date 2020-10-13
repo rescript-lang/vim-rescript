@@ -30,6 +30,10 @@ NeoBundle 'ryyppy/vim-rescript'
 :RescriptFormat
   Formats the current buffer
 
+:UpgradeFromReason
+  Reads from the current .re / .res file, and creates an equivalent .res / .resi file in the
+  same path. Make sure to delete the original .re file before building.
+
 :RescriptBuild
   [Experimental] builds your current project
 
@@ -40,9 +44,39 @@ NeoBundle 'ryyppy/vim-rescript'
   [Experimental] Opens a preview buffer with the current rescript plugin state
 ```
 
-## Type Hint Window
+## Configuration
 
-This plugin uses a preview buffer to render madk
+We are currently using a forked version of RLS to be able to do type-hinting (without using an LSP client actually). To build the binary, do the following:
+
+```
+cd ~/Projects
+
+git clone https://github.com/cristianoc/reason-language-server.git
+git checkout dumpLocations
+
+# You will need esy to build the project
+esy
+```
+
+After a successful build, you will find a binary at path `_esy/default/build/install/default/bin/Bin`. To make things easier, we will symlink it:
+
+```
+cd ~/Projects/reason-language-server
+ln -s bin.exe _esy/default/build/install/default/bin/Bin
+```
+
+Now open your vimrc file and add following line:
+
+```
+let g:rescript_type_hint_bin = "~/Projects/reason-language-server/bin.exe"
+```
+
+That's it! Now you should be able to use `RescriptTypeHint` on a `.res` file:
+
+- Within a ReScript project, create a new `myfile.res`
+- Add `let a = ""`
+- Move your cursor above the empty string `""`
+- Type `:RescriptTypeHint`. A preview window will open to show the type information
 
 ## Key Mappings
 
