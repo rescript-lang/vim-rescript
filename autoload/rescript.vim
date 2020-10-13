@@ -227,6 +227,8 @@ function! rescript#BuildProject()
     let s:got_build_err = 0
     call setqflist([])
     cclose
+  elseif v:shell_error ==? 2
+    echo out
   else
     let compilerLogFile = g:rescript_project_root . "/lib/bs/.compiler.log" 
 
@@ -267,6 +269,30 @@ function! rescript#BuildProject()
     return { 'has_error': 1, 'errors': l:errors }
   else
     return { 'has_error': 0, 'errors': [] }
+  endif
+endfunction
+
+function! rescript#ReasonToRescript()
+  let l:ext = expand("%:e")
+
+  if l:ext !=# "re" && l:ext !=# "rei"
+    echo "Current buffer is not a .re / .rei file... Do nothing."
+    return
+  endif
+  let l:command = g:resc_command . " -format " . @%
+
+  silent let l:out = systemlist(l:command)
+  if v:shell_error ==? 0
+    let l:target_ext = l:ext ==# "re" ? "res" : "resi"
+    let l:res_file = expand("%:p:r") . "." . target_ext
+    let l:original_file = expand("%:t")
+    execute "silent! botright vsplit " . l:res_file
+    let l:out = ["// This file was automatically converted to ReScript from '" .l:original_file . "'" ,
+          \ "// Check the output and make sure to delete the original file"] + l:out
+    call setline(1, l:out)
+    echo "Reformatted successfully"
+  else
+    echo "Could not reformat Reason file to ReScript"
   endif
 endfunction
 
