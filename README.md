@@ -95,6 +95,18 @@ autocmd FileType rescript nnoremap <silent> <buffer> <localleader>b :RescriptBui
 - `npm install` dependencies
 - `make test` to run the tests
 
+**Working within VIM**
+
+First make sure to register your locally checked out vim-rescript project as a plugin within your vim configuration:
+
+```
+" vim-plug
+`Plug ~/Projects/vim-rescript`
+```
+
+- Run `:PlugInstall` (you'll not see the plugin in the interactive vim-plug list, because it is a local project)
+- You can now work on any of the `autoload` files. After you changed a file, just run `:so %` to evaluate the current module, then proceed to do your manual tests
+
 For all the specs about editor integration & the ReScript platform, check out the [CONTRIBUTING](https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md) file of the rescript-vscode reference implementation.
 
 ## Credits
