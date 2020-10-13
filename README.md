@@ -1,12 +1,21 @@
 # vim-rescript
 
+## Requirements
+
+`bs-platform@8.3` or later
+
 ## Features
 
 - Syntax highlighting for ReSript files
 - Filetype detection for `.res`, `.resi`
 - Basic automatic indentation
 - Formatting `.res` files
-- Utility commands for building your project
+- Convert existing `.re` /`.rei` files to `.res` /`.resi`
+
+**Experimental:**
+- Type Hinting for current cursor position
+- Build command utilities
+- Display syntax error / build error diagnostics in VIM quickfix
 
 ## Installation
 
@@ -105,9 +114,10 @@ First make sure to register your locally checked out vim-rescript project as a p
 ```
 
 - Run `:PlugInstall` (you'll not see the plugin in the interactive vim-plug list, because it is a local project)
-- You can now work on any of the `autoload` files. After you changed a file, just run `:so %` to evaluate the current module, then proceed to do your manual tests
+- You can open and edit functionality in any plugin file. After any changes, just run `:so %` in the same buffer to source the current file, then proceed to do your manual tests
 
-For all the specs about editor integration & the ReScript platform, check out the [CONTRIBUTING](https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md) file of the rescript-vscode reference implementation.
+**Integration Specs:**
+For all the informal specs about editor integration & the ReScript platform, check out the [CONTRIBUTING](https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md) file of the rescript-vscode reference implementation.
 
 ## Credits
 
