@@ -83,6 +83,13 @@ function! rescript#DetectVersion()
 endfunction
 
 function! rescript#Format()
+  let l:ext = expand("%:e")
+
+  if matchstr(l:ext, 'resi\?') == ""
+    echo "Current buffer is not a .res / .resi file... Do nothing."
+    return
+  endif
+
   let l:view = winsaveview()
 
   " Used for stderr tracking
@@ -93,7 +100,7 @@ function! rescript#Format()
   " this is needed to because bsc -format can't
   " consume code from stdin, so we need to dump
   " the content into a temporary file first
-  let l:tmpname = tempname() . ".res"
+  let l:tmpname = tempname() . "." . l:ext
 
   call writefile(getline(1, '$'), l:tmpname)
 
@@ -190,6 +197,13 @@ function! rescript#TypeHint()
   endfor
 
   if exists("l:match")
+    " In case our hover involves a reference, resolve that first
+    let l:matches = matchlist(get(l:match, "hover", ""), '#\(\d\+\)')
+    if len(l:matches) > 0
+      let l:index = l:matches[1]
+      let l:match = get(l:json, l:index)
+    endif
+
     if get(l:match, "hover", "") != ""
       let md_content = l:match.hover
 
@@ -217,11 +231,89 @@ function! rescript#TypeHint()
   echo "No type info"
 endfunction
 
+function! rescript#JumpToDefinition()
+  call rescript#highlight#StopHighlighting()
+
+  " Make sure we are type hinting on a written file
+  if &mod == 1
+    echo "write"
+    write
+  endif
+
+  "let l:command = g:rescript_type_hint_bin . " dump " . @%
+  let l:command = g:rescript_type_hint_bin . " dump " . @%
+
+  let out = system(l:command)
+
+  if v:shell_error != 0
+    echohl Error | echomsg "Type Info failed with exit code '" . v:shell_error . "'" | echohl None
+    return
+  endif
+
+  let l:json = []
+  try
+    let l:json = json_decode(out)
+  catch /.*/
+    echo "No type info due to build error"
+    return
+  endtry
+
+  let c_line = line(".")
+  let c_col = col(".")
+
+  for item in l:json
+    let start_line = item.range.start.line + 1
+    let end_line = item.range.end.line + 1
+    let start_col = item.range.start.character + 1
+    let end_col = item.range.end.character
+
+    if c_line >= start_line && c_line <= end_line
+      if c_col >= start_col && c_col <= end_col
+        let l:match = item
+        break
+      endif
+    endif
+  endfor
+
+  if exists("l:match")
+    if has_key(l:match, "definition")
+      let l:def = l:match.definition
+
+      if has_key(l:def, "uri")
+        execute ":e " . l:def.uri
+      endif
+
+      let start_line = l:def.range.start.line + 1
+      let start_col = l:def.range.start.character + 1
+      let end_line = l:def.range.end.line + 1
+      let end_col = l:def.range.end.character
+      call cursor(start_line, start_col)
+
+      let startPos = [start_line, start_col, end_col - start_col]
+      let endPos = [end_line, end_col]
+      let pos = [startPos, endPos]
+
+      " If pos doesn't point to start: 0,0 and end: 0,0
+      if pos != [[1, 1, -1], [1, 0]]
+        call rescript#highlight#HighlightWord(pos)
+      endif
+
+      return
+    endif
+  endif
+  echo "No definition found"
+endfunction
+
 function! rescript#BuildProject()
   let out = system(g:resb_command)
 
+
   if v:shell_error ==? 0
-    echo "Build successfully"
+    echo "Build successful"
+
+    " In case there was an open preview window that could
+    " be stale by now
+    pclose
 
     " Clear out qf list in case a previous build errors were fixed
     let s:got_build_err = 0
@@ -257,6 +349,10 @@ function! rescript#BuildProject()
         else
           cfirst
         endif
+      else
+        " If we couldn't parse any proper errors, show the compiler log in a
+        " preview instead
+        call s:ShowInPreview("compiler-log", "text", split(out, "\n"))
       endif
 
       let s:got_build_err = 1

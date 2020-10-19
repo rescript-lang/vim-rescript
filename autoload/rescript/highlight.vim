@@ -21,7 +21,11 @@ endfunction
 
 function! rescript#highlight#StopHighlighting()
   for item in s:matches
-    call matchdelete(item)
+    try
+      call matchdelete(item)
+    catch /.*/
+      " don't really care about highlighting errors
+    endtry
   endfor
   let s:matches = []
 

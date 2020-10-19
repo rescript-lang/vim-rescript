@@ -49,6 +49,9 @@ NeoBundle 'ryyppy/vim-rescript'
 :RescriptTypeHint
   [Experimental] Uses the g:rescript_type_hint_bin executable to extract type information of the current file and displays the right type hint for the current cursor position
 
+:RescriptJumpToDefinition
+  [Experimental] Uses the g:rescript_type_hint_bin executable to jump to the original definition of the entity on the current position
+
 :RescriptInfo
   [Experimental] Opens a preview buffer with the current rescript plugin state
 ```
@@ -96,6 +99,7 @@ That's it! Now you should be able to use `RescriptTypeHint` on a `.res` file:
 autocmd FileType rescript nnoremap <silent> <buffer> <localleader>r :RescriptFormat<CR>
 autocmd FileType rescript nnoremap <silent> <buffer> <localleader>t :RescriptTypeHint<CR>
 autocmd FileType rescript nnoremap <silent> <buffer> <localleader>b :RescriptBuild<CR>
+autocmd FileType rescript nnoremap <silent> <buffer> gd :RescriptJumpToDefinition<CR>
 ```
 
 ## Development
