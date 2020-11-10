@@ -307,8 +307,13 @@ endfunction
 function! rescript#BuildProject()
   let out = system(g:resb_command)
 
+  " We don't rely too heavily on exit codes. If there's a compiler.log,
+  " then there is either an error or a warning, so we rely on the existence
+  " of the compiler.log as the source of truth instead
+  let compilerLogFile = g:rescript_project_root . "/lib/bs/.compiler.log"
+  let compilerLogExists = !empty(glob(compilerLogFile))
 
-  if v:shell_error ==? 0
+  if v:shell_error ==? 0 && compilerLogExists ==? 0
     echo "Build successful"
 
     " In case there was an open preview window that could
@@ -322,8 +327,6 @@ function! rescript#BuildProject()
   elseif v:shell_error ==? 2
     echo out
   else
-    let compilerLogFile = g:rescript_project_root . "/lib/bs/.compiler.log" 
-
     let lines = readfile(compilerLogFile)
     let l:entries = rescript#parsing#ParseCompilerLogEntries(lines)
     if !empty(l:entries)
