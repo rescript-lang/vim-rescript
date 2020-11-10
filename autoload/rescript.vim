@@ -314,21 +314,13 @@ function! rescript#BuildProject()
   let compilerLogExists = !empty(glob(compilerLogFile))
 
   if v:shell_error ==? 0 && compilerLogExists ==? 0
-    echo "Build successful"
-
-    " In case there was an open preview window that could
-    " be stale by now
-    pclose
-
-    " Clear out qf list in case a previous build errors were fixed
     let s:got_build_err = 0
-    call setqflist([])
-    cclose
   elseif v:shell_error ==? 2
     echo out
   else
     let lines = readfile(compilerLogFile)
     let l:entries = rescript#parsing#ParseCompilerLogEntries(lines)
+
     if !empty(l:entries)
       let l:last = l:entries[len(l:entries)-1]
       let l:errors = rescript#parsing#ParseCompilerErrorOutput(l:last)
@@ -359,14 +351,27 @@ function! rescript#BuildProject()
       endif
 
       let s:got_build_err = 1
-      echohl Error | echomsg "ReScript build failed." | echohl None
+    else
+      " basically empty compiler.log without entries
+      let s:got_build_err = 0
     endif
 
   endif
 
   if s:got_build_err ==? 1
+    echohl Error | echomsg "ReScript build failed." | echohl None
     return { 'has_error': 1, 'errors': l:errors }
   else
+    echo "Build successful"
+
+    " In case there was an open preview window that could
+    " be stale by now
+    pclose
+
+    " Clear out qf list in case a previous build errors were fixed
+    call setqflist([])
+    cclose
+
     return { 'has_error': 0, 'errors': [] }
   endif
 endfunction

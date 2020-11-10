@@ -142,7 +142,9 @@ function! rescript#parsing#ParseCompilerLogEntries(lines)
     elseif mode ==? "collect"
       if matchstr(line, '#Done') != ""
         let mode = "start"
-        let ret = add(ret, content)
+        if !empty(content)
+          let ret = add(ret, content)
+        endif
       else
         let content = add(content, line)
       endif
