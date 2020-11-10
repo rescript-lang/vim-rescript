@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/ryyppy/vim-rescript#readme",
   "dependencies": {
-    "bs-platform": "^8.3.0",
+    "bs-platform": "^8.3.3-dev.2",
     "reason-react": "^0.9.1"
   }
 }
