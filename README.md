@@ -6,6 +6,8 @@ Its experimental features rely on the ReScript _type hint binary_ that is curren
 
 The plugin provides essential features such as filtetype detection and syntax highlighting, and was designed to work in a `coc-vim` setup as well.
 
+See `:h rescript` for the detailed helpfile.
+
 ## Requirements
 
 Plugin works with projects based on `bs-platform@8.3` or later
