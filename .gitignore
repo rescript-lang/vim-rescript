@@ -18,11 +18,13 @@
 *.annot
 *.cmj
 *.bak
-lib/bs
 *.mlast
 *.mliast
 .vscode
 .merlin
-.bsb.lock
 
+.bsb.lock
+lib/bs
 node_modules/
+test/**/*.js
+doc/tags

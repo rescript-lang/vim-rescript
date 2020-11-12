@@ -1,6 +1,9 @@
 {
   "name": "vim-rescript",
   "version": "0.1.0",
+  "reason": {
+    "react-jsx": 3
+  },
   "sources": {
     "dir" : "src",
     "subdirs" : true
@@ -9,8 +12,9 @@
     "module": "commonjs",
     "in-source": true
   },
-  "suffix": ".bs.js",
+  "suffix": ".js",
   "bs-dependencies": [
+    "reason-react"
   ],
   "warnings": {
     "error" : "+101"
