@@ -304,6 +304,67 @@ function! rescript#JumpToDefinition()
   echo "No definition found"
 endfunction
 
+
+" Item kind: https://github.com/cristianoc/reason-language-server/blob/dumpLocations/src/lsp/NewCompletions.re#L265
+" value: 12
+" type: 22
+" attribute: 5
+" constructor: 4
+" filemodule: 9
+" module: 9
+
+let s:completeKinds = {
+      \'12': "v",
+      \'22': "t",
+      \'5': "a",
+      \'4': "c",
+      \'9': "m",
+      \}
+
+function! rescript#Complete(findstart, base)
+  let c_line = line(".")
+  let c_col = col(".")
+
+  if a:findstart
+    return c_col
+  endif
+
+  let l:ext = expand("%:e")
+
+  let l:tmpname = tempname() . "." . l:ext
+  call writefile(getline(1, '$'), l:tmpname)
+
+  let l:command = g:rescript_type_hint_bin . " complete " . @% . ":" . ( c_line - 1) . ":" . (c_col - 1) . " " . l:tmpname
+
+  let out = system(l:command)
+
+  let l:json = []
+  try
+    let l:json = json_decode(out)
+  catch /.*/
+    echo "No completion results"
+    return
+  endtry
+
+  if type(l:json) != v:t_list
+    echo "No completion results"
+    return []
+  endif
+
+  let l:ret = []
+
+  for item in l:json
+    ":h complete-items
+    let l:kind = get(s:completeKinds, string(item.kind), "v")
+    let entry = { 'word': item.label, 'kind': l:kind, 'info': item.documentation }
+
+    let l:ret = add(l:ret, entry)
+  endfor
+
+  call delete(l:tmpname)
+  return l:ret
+endfunction
+
 function! rescript#BuildProject()
   let out = system(g:resb_command)
 

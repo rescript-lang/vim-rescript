@@ -1,14 +1,23 @@
 # vim-rescript
 
+This is the official vim plugin for baseline ReScript functionality withoutthe need of any third party plugins.
+
+Its experimental features rely on the ReScript _type hint binary_ that is currently WIP (which is also used in rescript-vscode). More details on how to compile and configure this binary can be found in the Installation section.
+
+The plugin provides essential features such as filtetype detection and syntax highlighting, and was designed to work in a `coc-vim` setup as well.
+
 ## Requirements
 
-`bs-platform@8.3` or later
+Plugin works with projects based on `bs-platform@8.3` or later
 
 ## Features
 
+**Enabled on load:**
 - Syntax highlighting for ReSript files
 - Filetype detection for `.res`, `.resi`
 - Basic automatic indentation
+
+**Additonal Functions:**
 - Formatting `.res` files
 - Convert existing `.re` /`.rei` files to `.res` /`.resi`
 
@@ -16,6 +25,7 @@
 - Type Hinting for current cursor position
 - Build command utilities
 - Display syntax error / build error diagnostics in VIM quickfix
+- Autocompletion w/ Vim's omnicomplete
 
 ## Installation
 
@@ -105,6 +115,22 @@ autocmd FileType rescript nnoremap <silent> <buffer> <localleader>r :RescriptFor
 autocmd FileType rescript nnoremap <silent> <buffer> <localleader>t :RescriptTypeHint<CR>
 autocmd FileType rescript nnoremap <silent> <buffer> <localleader>b :RescriptBuild<CR>
 autocmd FileType rescript nnoremap <silent> <buffer> gd :RescriptJumpToDefinition<CR>
+```
+
+## Autocompletion
+
+This plugin supports auto-completion with Vim's builtin `omnifunc`, that is triggered with `C-x C-o` in insert mode to look for autocomplete candidates.
+
+> While omnicomplete's dialog is open, use `C-n` / `C-p` to navigated to the next / previous item
+
+```viml
+" Hooking up the Rescript autocomplete function
+set omnifunc=rescript#Complete
+
+
+" When preview is enabled, then omnicomplete will display additional
+" infos for a selected item 
+set completeopt+=preview
 ```
 
 ## Development
