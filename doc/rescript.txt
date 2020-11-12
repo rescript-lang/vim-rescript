@@ -1,0 +1,100 @@
+rescript.txt 	VIM plugin for the ReScript programming language
+
+ ____      ____            _       _    ~
+|  _ \ ___/ ___|  ___ _ __(_)_ __ | |_  ~
+| |_) / _ \___ \ / __| '__| | '_ \| __| ~
+|  _ <  __/___) | (__| |  | | |_) | |_  ~
+|_| \_\___|____/ \___|_|  |_| .__/ \__| ~
+                            |_|         ~
+
+
+Main Website: <https://rescript-lang.org/>
+Plugin Website: <https://github.com/rescript-lang/vim-rescript>
+
+===============================================================================
+CONTENTS                                                             *rescript*
+
+	    Intro ......................... |rescript-introduction|
+	   Config ......................... |rescript-config|
+	   Variables ......................... |rescript-variables|
+	 Commands ......................... |rescript-commands|
+
+
+===============================================================================
+INTRODUCTION                                            *rescript-introduction*
+
+This plugin provides important features to work on ReScript projects, such as:
+
+- Syntax highlighting
+- Code formatting
+- Type hints
+- Goto Definition
+- Autocompletion (via omnicomplete)
+
+Compatibility:
+This plugin is guaranteed to work with `bs-platform@8.3` and above.
+
+Please make sure to install your project dependencies. The plugin will look
+for the nearest node_modules folder to get access to the ReScript toolchain.
+
+===============================================================================
+CONFIG                                                      *rescript-config*
+
+By default, this plugin will not create any keymappings, nor does it mess
+around with any other vim configurations, so you'd need to add some basic
+configuration to your |vimrc|to get access to the full set of features.
+
+Here is a default configuration to get you started
+  autocmd FileType rescript nnoremap <silent> <buffer> <localleader>r :RescriptFormat<CR>
+  autocmd FileType rescript nnoremap <silent> <buffer> <localleader>t :RescriptTypeHint<CR>
+  autocmd FileType rescript nnoremap <silent> <buffer> <localleader>b :RescriptBuild<CR>
+  autocmd FileType rescript nnoremap <silent> <buffer> gd :RescriptJumpToDefinition<CR>
+
+Note that <buffer> allows us to use different commands with the same keybindings depending
+on the filetype. This is useful if to override your e.g. ALE bindings while working on
+ReScript projects.
+
+You also need to set the path to the rescript type hint binary:
+  let g:rescript_type_hint_bin = "~/Projects/.../bin.exe"
+
+
+===============================================================================
+VARIABLES                                                  *rescript-variables*
+
+g:rescript_type_hint_bin		string       *g:rescript_type_hint_bin*
+
+    Path to ReScript's type hinting binary that is currently experimental.
+    Check out vim-rescript's README file for more details on how to obtain
+    the binary.
+
+
+===============================================================================
+COMMANDS                                                    *rescript-commands*
+
+*:RescriptFormat*
+    Formats the current buffer. In case of an error, it will open a quickfix
+    window with all the syntax errors. See |:cfirst| |:cnext| |:cprev| for
+    quick error navigation
+
+:UpgradeFromReason
+    Reads from the current .re / .res file, and creates an equivalent .res /
+    .resi file in the same path. Make sure to delete the original .re file
+    after writing your new .res file, otherwise the compiler will not compile.
+
+:RescriptBuild
+    [Experimental] builds your current project
+
+:RescriptTypeHint
+    [Experimental] Uses the g:rescript_type_hint_bin executable to extract
+    type information of the current file and displays the right type hint for
+    the current cursor position
+
+:RescriptJumpToDefinition
+    [Experimental] Uses the g:rescript_type_hint_bin executable to jump to the
+    original definition of the entity on the current position
+
+:RescriptInfo
+    [Experimental] Opens a preview buffer with the current rescript plugin
+    state
+
+vim:tw=78:ts=8:noet:ft=help:norl:
