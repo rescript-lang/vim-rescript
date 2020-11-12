@@ -66,7 +66,7 @@ After a successful build, you will find a binary at path `_esy/default/build/ins
 
 ```
 cd ~/Projects/reason-language-server
-ln -s bin.exe _esy/default/build/install/default/bin/Bin
+ln -s _esy/default/build/install/default/bin/Bin bin.exe
 ```
 
 Now open your vimrc file and add following line:
