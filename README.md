@@ -33,30 +33,10 @@ Plugin 'ryyppy/vim-rescript'
 " Using NeoBundle
 NeoBundle 'ryyppy/vim-rescript'
 ```
-## Commands
 
-```
-:RescriptFormat
-  Formats the current buffer
+### Building the type hint binary
 
-:UpgradeFromReason
-  Reads from the current .re / .res file, and creates an equivalent .res / .resi file in the
-  same path. Make sure to delete the original .re file before building.
-
-:RescriptBuild
-  [Experimental] builds your current project
-
-:RescriptTypeHint
-  [Experimental] Uses the g:rescript_type_hint_bin executable to extract type information of the current file and displays the right type hint for the current cursor position
-
-:RescriptJumpToDefinition
-  [Experimental] Uses the g:rescript_type_hint_bin executable to jump to the original definition of the entity on the current position
-
-:RescriptInfo
-  [Experimental] Opens a preview buffer with the current rescript plugin state
-```
-
-## Configuration
+> Note: The following extra step will go away after we did a full release of our toolchain
 
 We are currently using a forked version of RLS to be able to do type-hinting (without using an LSP client actually). To build the binary, do the following:
 
@@ -83,12 +63,37 @@ Now open your vimrc file and add following line:
 let g:rescript_type_hint_bin = "~/Projects/reason-language-server/bin.exe"
 ```
 
+#### Testing the type hint binary
+
 That's it! Now you should be able to use `RescriptTypeHint` on a `.res` file:
 
 - Within a ReScript project, create a new `myfile.res`
 - Add `let a = ""`
 - Move your cursor above the empty string `""`
 - Type `:RescriptTypeHint`. A preview window will open to show the type information
+
+## Commands
+
+```
+:RescriptFormat
+  Formats the current buffer
+
+:UpgradeFromReason
+  Reads from the current .re / .res file, and creates an equivalent .res / .resi file in the
+  same path. Make sure to delete the original .re file before building.
+
+:RescriptBuild
+  [Experimental] builds your current project
+
+:RescriptTypeHint
+  [Experimental] Uses the g:rescript_type_hint_bin executable to extract type information of the current file and displays the right type hint for the current cursor position
+
+:RescriptJumpToDefinition
+  [Experimental] Uses the g:rescript_type_hint_bin executable to jump to the original definition of the entity on the current position
+
+:RescriptInfo
+  [Experimental] Opens a preview buffer with the current rescript plugin state
+```
 
 ## Key Mappings
 
