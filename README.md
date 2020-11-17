@@ -46,7 +46,7 @@ Plugin 'ryyppy/vim-rescript'
 NeoBundle 'ryyppy/vim-rescript'
 ```
 
-### Building the type hint binary
+### Building the Type Hint Binary
 
 > Note: The following extra step will go away after we did a full release of our toolchain
 
@@ -107,7 +107,11 @@ That's it! Now you should be able to use `RescriptTypeHint` on a `.res` file:
   [Experimental] Opens a preview buffer with the current rescript plugin state
 ```
 
-## Key Mappings
+## Configuration (vanilla VIM setup)
+
+### Key Mappings
+
+Here are some keymappings for using the builtin vim functions to get you started. These bindings will hopefully also not collide with any existing bindings in your vimrc setup, since they are scoped to `rescript` buffers only.
 
 ```viml
 " Note that <buffer> allows us to use different commands with the same keybindings depending
@@ -119,7 +123,7 @@ autocmd FileType rescript nnoremap <silent> <buffer> <localleader>b :RescriptBui
 autocmd FileType rescript nnoremap <silent> <buffer> gd :RescriptJumpToDefinition<CR>
 ```
 
-## Autocompletion
+### Autocompletion (omnicomplete)
 
 This plugin supports auto-completion with Vim's builtin `omnifunc`, that is triggered with `C-x C-o` in insert mode to look for autocomplete candidates.
 
@@ -134,6 +138,36 @@ set omnifunc=rescript#Complete
 " infos for a selected item 
 set completeopt+=preview
 ```
+
+## Configuration with coc-vim (experimental)
+
+[`coc-vim`](https://github.com/neoclide/coc.nvim) is a vim plugin that adds support for LSP servers (Language Server Protocol). The `vim-rescript` plugin doesn't provide the ReScript LSP out of the box, so for now you have to set it up manually with these steps:
+
+- Build the type hint binary as instructed further above and copy the `bin.exe` in the root of every ReScript project (this will be fixed in the future)
+- Clone the [rescript-vscode](https://github.com/rescript-lang/rescript-vscode) repo (e.g. in your `~/Projects` directory)
+- `cd ~/Projects/rescript-vscode`
+- `npm install && npm run compile` (this will compile the lsp in `server/out/server.js`
+
+Now open your CoC config (`:CocConfig` in vim), and enter following information:
+
+```json
+"languageserver": {
+  "rescript": {
+    "enable": true,
+    "module": "~/Projects/rescript-vscode/server/out/server.js",
+    "args": ["--node-ipc"],
+    "filetypes": ["rescript"],
+    "rootPatterns": ["bsconfig.json"]
+  }
+}
+```
+
+- Restart your vim and open a `.res` file
+- The server will eventually ask you if it should "do a fresh build". Enter `1` and hit enter to confirm.
+
+Now, whenever you save a file, the ReScript watcher will rebuild the program and report back any errors to the `vim-coc` framework. The `type-on-hover` and `goto-definition` functionality will work properly when your file compiled successfully. Autocomplete should also work when e.g. typing `List.`.
+
+Again: Please keep in mind that the type hint binary must be located in the root of your project, and its name should be `bin.exe`. Make sure this is the actual executable, and not a symlink.
 
 ## Development
 
