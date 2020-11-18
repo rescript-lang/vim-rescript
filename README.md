@@ -36,8 +36,6 @@ The plugin works with projects based on `bs-platform@8.3` or later
 
 `vim-rescript` can be installed manually or using your favourite plugin manager.
 
-Plugin manager examples:
-
 ```viml
 " Using vim-plug
 Plug 'ryyppy/vim-rescript'
