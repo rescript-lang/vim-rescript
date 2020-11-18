@@ -38,13 +38,13 @@ The plugin works with projects based on `bs-platform@8.3` or later
 
 ```vim
 " vim-plug
-Plug 'ryyppy/vim-rescript'
+Plug 'rescript-lang/vim-rescript'
 
 " Vundle
-Plugin 'ryyppy/vim-rescript'
+Plugin 'rescript-lang/vim-rescript'
 
 " NeoBundle
-NeoBundle 'ryyppy/vim-rescript'
+NeoBundle 'rescript-lang/vim-rescript'
 ```
 
 ### Building the Type Hint Binary

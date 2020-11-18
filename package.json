@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryyppy/vim-rescript.git"
+    "url": "git+https://github.com/rescript-lang/vim-rescript.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ryyppy/vim-rescript/issues"
+    "url": "https://github.com/rescript-lang/vim-rescript/issues"
   },
-  "homepage": "https://github.com/ryyppy/vim-rescript#readme",
+  "homepage": "https://github.com/rescript-lang/vim-rescript#readme",
   "dependencies": {
     "bs-platform": "^8.3.3-dev.2",
     "reason-react": "^0.9.1"
