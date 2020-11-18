@@ -36,14 +36,14 @@ The plugin works with projects based on `bs-platform@8.3` or later
 
 `vim-rescript` can be installed manually or using your favourite plugin manager.
 
-```viml
-" Using vim-plug
+```vim
+" vim-plug
 Plug 'ryyppy/vim-rescript'
 
-" Using Vundle
+" Vundle
 Plugin 'ryyppy/vim-rescript'
 
-" Using NeoBundle
+" NeoBundle
 NeoBundle 'ryyppy/vim-rescript'
 ```
 
@@ -53,7 +53,7 @@ NeoBundle 'ryyppy/vim-rescript'
 
 We are currently using a forked version of RLS to be able to do type-hinting (without using an LSP client actually). To build the binary, do the following:
 
-```
+```bash
 cd ~/Projects
 
 git clone https://github.com/cristianoc/reason-language-server.git
@@ -65,14 +65,14 @@ esy
 
 After a successful build, you will find a binary at path `_esy/default/build/install/default/bin/Bin`. To make things easier, we will symlink it:
 
-```
+```bash
 cd ~/Projects/reason-language-server
 ln -s _esy/default/build/install/default/bin/Bin bin.exe
 ```
 
 Now open your `vimrc` file and add following line:
 
-```
+```vim
 let g:rescript_type_hint_bin = "~/Projects/reason-language-server/bin.exe"
 ```
 
@@ -114,7 +114,7 @@ That's it! Now you should be able to use `RescriptTypeHint` on a `.res` file:
 
 Here are some keymappings for using the builtin vim functions to get you started. These bindings will hopefully also not collide with any existing bindings in your vimrc setup, since they are scoped to `rescript` buffers only.
 
-```viml
+```vim
 " Note that <buffer> allows us to use different commands with the same keybindings depending
 " on the filetype. This is useful if to override your e.g. ALE bindings while working on
 " ReScript projects.
@@ -130,10 +130,9 @@ This plugin supports auto-completion with Vim's builtin `omnifunc`, that is trig
 
 > While omnicomplete's dialog is open, use `C-n` / `C-p` to navigate to the next / previous item
 
-```viml
+```vim
 " Hooking up the ReScript autocomplete function
 set omnifunc=rescript#Complete
-
 
 " When preview is enabled, omnicomplete will display additional
 " information for a selected item
@@ -179,9 +178,9 @@ Now, whenever you save a file, the ReScript watcher will rebuild the program and
 
 First make sure to register your locally checked out vim-rescript project as a plugin within your vim configuration:
 
-```
+```vim
 " vim-plug
-`Plug ~/Projects/vim-rescript`
+Plug ~/Projects/vim-rescript
 ```
 
 - Run `:PlugInstall` (you'll not see the plugin in the interactive vim-plug list, because it is a local project)
