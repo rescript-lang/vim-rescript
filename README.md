@@ -1,5 +1,8 @@
 # vim-rescript
 
+> **Note:** We are getting close to a polished release workflow. until then the installation process involves a few extra manual steps.
+> If you are experiencing any troubles, please visit our [Forum](https://forum.rescript-lang.org) or open an issue.
+
 This is the official vim plugin for baseline ReScript functionality without the need for any third party plugins.
 
 Its experimental features rely on the ReScript _type hint binary_, which is also used in [rescript-vscode](https://github.com/rescript-lang/rescript-vscode), that is currently WIP. More details on how to compile and configure this binary can be found in the [Installation section](#installation).
