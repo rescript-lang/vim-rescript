@@ -1,12 +1,10 @@
 # vim-rescript
 
-**This is the official vim plugin for ReScript.**
-
-We support plain VIM and vim-coc workflows.
-
-See `:h rescript` for the detailed [helpfile](./doc/rescript.txt).
+**This is the official vim plugin for ReScript for vanilla VIM and vim-coc.**
 
 > If you are experiencing any troubles, open an issue or visit our [Forum](https://forum.rescript-lang.org) and ask for guidance.
+
+See `:h rescript` for the detailed [helpfile](./doc/rescript.txt).
 
 ## Requirements
 
@@ -18,15 +16,15 @@ The plugin works with projects based on `bs-platform@8.3` or later
 - Syntax highlighting for ReSript files
 - Filetype detection for `.res`, `.resi`
 - Basic automatic indentation
-- Formatting `.res` files
-- Convert existing `.re` /`.rei` files to `.res` /`.resi`
 - Includes LSP for coc-vim usage
 
 **Provided by vim-rescript commands:**
+- Formatting `.res` files
 - Type Hinting for current cursor position
 - Build command
 - Display syntax error / build error diagnostics in VIM quickfix
 - Autocompletion w/ Vim's omnicomplete
+- Convert existing `.re` /`.rei` files to `.res` /`.resi`
 
 ## Installation
 
