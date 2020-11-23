@@ -14,10 +14,12 @@ Plugin Website: <https://github.com/rescript-lang/vim-rescript>
 ===============================================================================
 CONTENTS                                                             *rescript*
 
-	    Intro ......................... |rescript-introduction|
-	   Config ......................... |rescript-config|
-	   Variables ......................... |rescript-variables|
-	 Commands ......................... |rescript-commands|
+	   Intro ......................... |rescript-introduction|
+	   Config ........................ |rescript-config|
+           omnicomplete................... |rescript-omnicomplete|
+           COC Config..................... |rescript-coc|
+	   Variables ..................... |rescript-variables|
+	   Commands ...................... |rescript-commands|
 
 
 ===============================================================================
@@ -32,7 +34,8 @@ This plugin provides important features to work on ReScript projects, such as:
 - Autocompletion (via omnicomplete)
 
 Compatibility:
-This plugin is guaranteed to work with `bs-platform@8.3` and above.
+This plugin is guaranteed to work with `bs-platform@8.3` and above and comes
+with all the required executables.
 
 Please make sure to install your project dependencies. The plugin will look
 for the nearest node_modules folder to get access to the ReScript toolchain.
@@ -54,19 +57,52 @@ Note that <buffer> allows us to use different commands with the same keybindings
 on the filetype. This is useful if to override your e.g. ALE bindings while working on
 ReScript projects.
 
-You also need to set the path to the rescript type hint binary:
-  let g:rescript_type_hint_bin = "~/Projects/.../bin.exe"
+===============================================================================
+OMNICOMPLETE					   	*rescript-omnicomplete*
 
+This plugin supports auto-completion with Vim's builtin |omnifunc|, that is
+triggered with `C-x C-o` in insert mode to look for autocomplete candidates.
+
+While omnicomplete's dialog is open, use `C-n` / `C-p` to navigate to the next
+/ previous item
+
+Put the following settings in your vimrc to activate omnicompletion:
+  " Hooking up the ReScript autocomplete function
+  set omnifunc=rescript#Complete
+
+  " When preview is enabled, omnicomplete will display additional
+  " information for a selected item
+  set completeopt+=preview
+
+===============================================================================
+COC-CONFIG						    *rescript-coc*
+
+In case you want to use ReScript with |coc-nvim|, open your config file with
+|:CocConfig| and add following settings:
+
+"languageserver": {
+  "rescript": {
+    "enable": true,
+    "module": "~/.config/nvim/plugged/vim-rescript/rescript-vscode-1.0.0/extension/server/out/server.js",
+    "args": ["--node-ipc"],
+    "filetypes": ["rescript"],
+    "rootPatterns": ["bsconfig.json"]
+  }
+}
+
+The config above assumes that you are using vim-plug. Adapt your `module` path
+according to the install location of your vim-rescript plugin.
+
+Save the configuration, run |:CocRestart| and open a (built) ReScript project
+and check your code for type-hints.
 
 ===============================================================================
 VARIABLES                                                  *rescript-variables*
 
-g:rescript_type_hint_bin		string       *g:rescript_type_hint_bin*
+g:rescript_editor_support_exe		string       *g:rescript_editor_support_exe*
 
-    Path to ReScript's type hinting binary that is currently experimental.
-    Check out vim-rescript's README file for more details on how to obtain
-    the binary.
-
+    Path to ReScript's editor-support executable. This is mainly used for
+    plugin development purposes. Don't abuse this config.
 
 ===============================================================================
 COMMANDS                                                    *rescript-commands*
@@ -76,25 +112,24 @@ COMMANDS                                                    *rescript-commands*
     window with all the syntax errors. See |:cfirst| |:cnext| |:cprev| for
     quick error navigation
 
-:UpgradeFromReason
+*:UpgradeFromReason*
     Reads from the current .re / .res file, and creates an equivalent .res /
     .resi file in the same path. Make sure to delete the original .re file
     after writing your new .res file, otherwise the compiler will not compile.
 
-:RescriptBuild
-    [Experimental] builds your current project
+*:RescriptBuild*
+    Builds your current project with g:rescript_build_exe
 
-:RescriptTypeHint
-    [Experimental] Uses the g:rescript_type_hint_bin executable to extract
+*:RescriptTypeHint*
+    Uses the g:rescript_editor_support_exe executable to extract
     type information of the current file and displays the right type hint for
     the current cursor position
 
-:RescriptJumpToDefinition
-    [Experimental] Uses the g:rescript_type_hint_bin executable to jump to the
+*:RescriptJumpToDefinition*
+    Uses the g:rescript_editor_support_exe executable to jump to the
     original definition of the entity on the current position
 
-:RescriptInfo
-    [Experimental] Opens a preview buffer with the current rescript plugin
-    state
+*:RescriptInfo*
+    Lists current plugin state (detected config, executable paths, etc)
 
 vim:tw=78:ts=8:noet:ft=help:norl:

@@ -1,5 +1,7 @@
 """ RESCRIPT EDITOR SPEC:
-""" https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md
+
+
+let s:rescript_plugin_dir = expand('<sfile>:p:h:h')
 
 " Util
 " See: https://vi.stackexchange.com/questions/19056/how-to-create-preview-window-to-display-a-string
@@ -22,22 +24,22 @@ endfunction
 " Inits the plugin variables, e.g. finding all the necessary binaries
 function! rescript#Init()
   if has('macunix')
-    let b:res_platform = "darwin"
+    let b:rescript_arch = "darwin"
   elseif has('win32')
-    let b:res_platform = "win32"
+    let b:rescript_arch = "win32"
   elseif has('unix')
-    let b:res_platform = "linux"
+    let b:rescript_arch = "linux"
   endif
 
   " Looks for the nearest node_modules directory
-  let g:res_bin_dir = finddir('node_modules', ".;") . "/bs-platform/" . b:res_platform
+  let l:res_bin_dir = finddir('node_modules', ".;") . "/bs-platform/" . b:rescript_arch
 
-  "if !exists("g:resc_command")
-  let g:resc_command = g:res_bin_dir . "/bsc.exe"
+  "if !exists("g:rescript_compile_exe")
+  let g:rescript_compile_exe = l:res_bin_dir . "/bsc.exe"
   "endif
 
-  "if !exists("g:resb_command")
-  let g:resb_command = g:res_bin_dir . "/bsb.exe"
+  "if !exists("g:rescript_build_exe")
+  let g:rescript_build_exe = l:res_bin_dir . "/bsb.exe"
   "endif
 
   " Needed for state tracking of the formatting error state
@@ -45,8 +47,8 @@ function! rescript#Init()
   let s:got_build_err = 0
 
 
-  if !exists("g:rescript_type_hint_bin")
-    let g:rescript_type_hint_bin = "bin.exe"
+  if !exists("g:rescript_editor_support_exe")
+    let g:rescript_editor_support_exe = s:rescript_plugin_dir . "/rescript-vscode-1.0.0/extension/server/" . b:rescript_arch . "/rescript-editor-support.exe"
   endif
 
 
@@ -67,17 +69,18 @@ function! s:DeleteLines(start, end) abort
 endfunction
 
 function! rescript#DetectVersion()
-  let l:command = g:resc_command . " -version"
+  let l:command = g:rescript_compile_exe . " -version"
 
   silent let l:output = system(l:command)
 
-  let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+\) .*')
+  let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+.*\) (.*')
 
   if len(l:version_list) < 2
     let s:rescript_version = "0"
   else
     let s:rescript_version = l:version_list[1]
   endif
+
   
   return s:rescript_version
 endfunction
@@ -105,7 +108,7 @@ function! rescript#Format()
   call writefile(getline(1, '$'), l:tmpname)
 
   " bsc -format myFile.res > tempfile
-  let l:command = g:resc_command . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
+  let l:command = g:rescript_compile_exe . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
 
   silent let l:out = systemlist(l:command) 
 
@@ -161,8 +164,7 @@ function! rescript#TypeHint()
     write
   endif
 
-  "let l:command = g:rescript_type_hint_bin . " dump " . @% 
-  let l:command = g:rescript_type_hint_bin . " dump " . @%
+  let l:command = g:rescript_editor_support_exe . " dump " . @%
 
   let out = system(l:command)
 
@@ -209,7 +211,6 @@ function! rescript#TypeHint()
 
       let text = split(md_content, "\n")
       let lines = extend(["Pos (l:c): " . c_line . ":" . c_col], text)
-      "let lines = add(lines, string(l:json))
 
       call s:ShowInPreview("type-preview", "markdown", lines)
 
@@ -240,8 +241,7 @@ function! rescript#JumpToDefinition()
     write
   endif
 
-  "let l:command = g:rescript_type_hint_bin . " dump " . @%
-  let l:command = g:rescript_type_hint_bin . " dump " . @%
+  let l:command = g:rescript_editor_support_exe . " dump " . @%
 
   let out = system(l:command)
 
@@ -334,7 +334,7 @@ function! rescript#Complete(findstart, base)
   let l:tmpname = tempname() . "." . l:ext
   call writefile(getline(1, '$'), l:tmpname)
 
-  let l:command = g:rescript_type_hint_bin . " complete " . @% . ":" . ( c_line - 1) . ":" . (c_col - 1) . " " . l:tmpname
+  let l:command = g:rescript_editor_support_exe . " complete " . @% . ":" . ( c_line - 1) . ":" . (c_col - 1) . " " . l:tmpname
 
   let out = system(l:command)
 
@@ -356,7 +356,8 @@ function! rescript#Complete(findstart, base)
   for item in l:json
     ":h complete-items
     let l:kind = get(s:completeKinds, string(item.kind), "v")
-    let entry = { 'word': item.label, 'kind': l:kind, 'info': item.documentation }
+
+    let entry = { 'word': item.label, 'kind': l:kind, 'info': item.documentation.value }
 
     let l:ret = add(l:ret, entry)
   endfor
@@ -366,7 +367,7 @@ function! rescript#Complete(findstart, base)
 endfunction
 
 function! rescript#BuildProject()
-  let out = system(g:resb_command)
+  let out = system(g:rescript_build_exe)
 
   " We don't rely too heavily on exit codes. If there's a compiler.log,
   " then there is either an error or a warning, so we rely on the existence
@@ -444,7 +445,7 @@ function! rescript#ReasonToRescript()
     echo "Current buffer is not a .re / .rei file... Do nothing."
     return
   endif
-  let l:command = g:resc_command . " -format " . @%
+  let l:command = g:rescript_compile_exe . " -format " . @%
 
   silent let l:out = systemlist(l:command)
   if v:shell_error ==? 0
@@ -468,5 +469,7 @@ function! rescript#Info()
   echo l:version
   echo "Detected Config File: " . g:rescript_project_config
   echo "Detected Project Root: " . g:rescript_project_root
-  echo "ReScript Type Hint Binary: " . g:rescript_type_hint_bin
+  echo "Detected rescript_editor_support_exe: " . g:rescript_editor_support_exe
+  echo "Detected rescript_compile_exe" . g:rescript_compile_exe
+  echo "Detected rescript_build_exe" . g:rescript_build_exe
 endfunction
