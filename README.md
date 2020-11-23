@@ -34,7 +34,7 @@ The plugin works with projects based on `bs-platform@8.3` or later
 
 `vim-rescript` can be installed either manually or by using your favourite plugin manager.
 
-```vim
+```viml
 " vim-plug
 Plug 'rescript-lang/vim-rescript'
 
@@ -52,7 +52,7 @@ NeoBundle 'rescript-lang/vim-rescript'
 Our plugin comes with all the necessary tools (LSP + editor-support binaries for Windows, Mac, Linux) to set up coc-vim.
 After the installation, open your coc config (`:CocConfig`) and add the following configuration:
 
-```vim
+```json
 "languageserver": {
   "rescript": {
     "enable": true,
