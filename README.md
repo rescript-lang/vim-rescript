@@ -1,16 +1,14 @@
 # vim-rescript
 
-**This is the official vim plugin for ReScript for vanilla VIM and vim-coc.**
+**This is the official vim plugin for ReScript.**
 
 > If you are experiencing any troubles, open an issue or visit our [Forum](https://forum.rescript-lang.org) and ask for guidance.
 
-See `:h rescript` for the detailed [helpfile](./doc/rescript.txt).
-
-## Requirements
-
-The plugin works with projects based on `bs-platform@8.3` or later
-
 ## Features
+
+**Supported Workflows:**
+- Plain VIM (without any third party plugins)
+- LSP + [coc-vim](https://github.com/neoclide/coc.nvim)
 
 **Basics:**
 - Syntax highlighting for ReSript files
@@ -19,12 +17,18 @@ The plugin works with projects based on `bs-platform@8.3` or later
 - Includes LSP for coc-vim usage
 
 **Provided by vim-rescript commands:**
-- Formatting `.res` files
-- Type Hinting for current cursor position
-- Build command
-- Display syntax error / build error diagnostics in VIM quickfix
-- Autocompletion w/ Vim's omnicomplete
+- Formatting `.res` files w/ syntax error diagnostics in VIM quickfix
 - Convert existing `.re` /`.rei` files to `.res` /`.resi`
+- Type hint for current cursor position
+- Jump to definition for current cursor position
+- Building the current projec w/ build diagnostics in VIM quickfix
+- Autocompletion w/ Vim's omnicomplete
+
+See `:h rescript` for the detailed [helpfile](./doc/rescript.txt).
+
+## Requirements
+
+The plugin works with projects based on `bs-platform@8.3` or later
 
 ## Installation
 
@@ -114,7 +118,6 @@ set omnifunc=rescript#Complete
 " information for a selected item
 set completeopt+=preview
 ```
-
 
 ## Credits
 
