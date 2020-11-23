@@ -22,9 +22,12 @@
 *.mliast
 .vscode
 .merlin
+.DS_Store
 
 .bsb.lock
 lib/bs
 node_modules/
 test/**/*.js
 doc/tags
+
+!rescript-vscode-1.0.0/extension/node_modules/
