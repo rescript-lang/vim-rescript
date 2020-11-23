@@ -1,6 +1,8 @@
 """ RESCRIPT EDITOR SPEC:
 """ https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md
 
+let s:rescript_plugin_dir = expand('<sfile>:p:h:h')
+
 " Util
 " See: https://vi.stackexchange.com/questions/19056/how-to-create-preview-window-to-display-a-string
 function! s:ShowInPreview(fname, fileType, lines)
@@ -46,7 +48,7 @@ function! rescript#Init()
 
 
   if !exists("g:rescript_type_hint_bin")
-    let g:rescript_type_hint_bin = "bin.exe"
+    let g:rescript_type_hint_bin = s:rescript_plugin_dir . "/rescript-vscode-1.0.0/extension/server/" . b:res_platform . "/rescript-editor-support.exe"
   endif
 
 
@@ -71,13 +73,14 @@ function! rescript#DetectVersion()
 
   silent let l:output = system(l:command)
 
-  let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+\) .*')
+  let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+.*\) (.*')
 
   if len(l:version_list) < 2
     let s:rescript_version = "0"
   else
     let s:rescript_version = l:version_list[1]
   endif
+
   
   return s:rescript_version
 endfunction
@@ -356,7 +359,8 @@ function! rescript#Complete(findstart, base)
   for item in l:json
     ":h complete-items
     let l:kind = get(s:completeKinds, string(item.kind), "v")
-    let entry = { 'word': item.label, 'kind': l:kind, 'info': item.documentation }
+
+    let entry = { 'word': item.label, 'kind': l:kind, 'info': item.documentation.value }
 
     let l:ret = add(l:ret, entry)
   endfor
@@ -468,5 +472,7 @@ function! rescript#Info()
   echo l:version
   echo "Detected Config File: " . g:rescript_project_config
   echo "Detected Project Root: " . g:rescript_project_root
-  echo "ReScript Type Hint Binary: " . g:rescript_type_hint_bin
+  echo "Detected rescript-editor-support.exe: " . g:rescript_type_hint_bin
+  echo "Detected ReScript Compiler Binary" . g:resc_command
+  echo "Detected ReScript Build Binary" . g:resb_command
 endfunction
