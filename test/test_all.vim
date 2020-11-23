@@ -38,8 +38,8 @@ function! InitTest()
     let l:platform = "linux"
   endif
 
-  call assert_equal("node_modules/bs-platform/" . l:platform . "/bsc.exe", g:resc_command)
-  call assert_equal("node_modules/bs-platform/" . l:platform . "/bsb.exe", g:resb_command)
+  call assert_equal("node_modules/bs-platform/" . l:platform . "/bsc.exe", g:rescript_compile_exe)
+  call assert_equal("node_modules/bs-platform/" . l:platform . "/bsb.exe", g:rescript_build_exe)
 endfunction
 
 function FormatErrorTest(fixtureName,...)
