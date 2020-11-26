@@ -6,9 +6,9 @@ endif
 syntax keyword resBoolean true false
 
 " Keywords
-syntax keyword resKeyword let val rec nonrec type external mutable
+syntax keyword resKeyword let rec type external mutable lazy private of with
 syntax keyword resKeyword if else switch when
-syntax keyword resKeyword and as open include module
+syntax keyword resKeyword and as open include module in constraint import export
 syntax keyword resKeyword for to downto while
 syntax keyword resKeyword try catch exception assert
 
