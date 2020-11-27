@@ -59,3 +59,26 @@ That's it! Now you should be able to use `RescriptTypeHint` / omnicompletion on 
 - Move your cursor above the empty string `""`
 - Type `:RescriptTypeHint`. A preview window will open to show the type information
 
+
+
+## Vendoring a new rescript-vscode version
+
+We are currently vendoring rescript-vscode to provide all the binaries + LSP for our coc-vim setup.
+
+First, `curl` the tagged zip bundle from the `rescript-vscode` GH releases:
+
+```
+url -L https://github.com/rescript-lang/rescript-vscode/releases/download/1.0.0/rescript-vscode-1.0.0.vsix -o rescript-vscode-1.0.0.zip
+```
+
+Unzip it, e.g.
+
+```
+unzip rescript-vscode-1.0.0.zip -d rescript-vscode-1.0.0
+```
+
+Lastly:
+
+- Remove the old vendored rescript-vscode folder, and check in the new one.
+- Do a last sanity check, delete the whole folder, do `git checkout --` to restore it, and run `node rescript-vscode-1.0.0/extension/server/out/server`
+- If the server started successfully, that means that everything works and we can proceed wrapping up by pushing / tagging the new release
