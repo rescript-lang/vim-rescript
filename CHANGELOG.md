@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Fixes installation issues that required an additional `npm install` in the rescript-vscode vendor folder
+
 ## 1.0.0 "Zero Config"
 
 - Vendor rescript-vscode-1.0.0 lsp + rescript-editor-support
