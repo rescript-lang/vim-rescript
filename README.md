@@ -45,6 +45,12 @@ Plugin 'rescript-lang/vim-rescript'
 NeoBundle 'rescript-lang/vim-rescript'
 ```
 
+You can also pin your installation to specific tags:
+
+```
+Plug 'rescript-lang/vim-rescript', {'tag': 'v1.0.1'}
+```
+
 ## Using vim-rescript with COC
 
 (`:h rescript-coc`)
