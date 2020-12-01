@@ -72,6 +72,9 @@ syntax match resModuleOrVariant "\v<[A-Z][A-Za-z0-9_'$]*"
 syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
 syntax match resModuleChain "\v<[A-Z][A-Za-z0-9_'$]*\."
 
+" Attribute
+syntax match resAttribute "\v\@([a-zA-z][A-Za-z0-9_']*)(\.([a-zA-z])[A-Za-z0-9_']*)*"
+
 " String
 syntax match resUnicodeChar "\v\\u[A-Fa-f0-9]\{4}" contained
 syntax match resEscapedChar "\v\\[\\"'ntbrf]" contained
@@ -99,5 +102,6 @@ highlight default link resUnicodeChar Character
 highlight default link resEscapedChar Character
 highlight default link resString String
 highlight default link resInterpolationVariable Macro
+highlight default link resAttribute PreProc
 
 let b:current_syntax = "rescript"
