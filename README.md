@@ -84,7 +84,7 @@ Vim comes with a set of useful functions that are completely self contained and 
 
 ```
 :h :RescriptFormat
-:h :UpgradeFromReason
+:h :RescriptUpgradeFromReason
 :h :RescriptBuild
 :h :RescriptTypeHint
 :h :RescriptJumpToDefinition
