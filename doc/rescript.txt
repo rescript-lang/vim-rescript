@@ -112,7 +112,7 @@ COMMANDS                                                    *rescript-commands*
     window with all the syntax errors. See |:cfirst| |:cnext| |:cprev| for
     quick error navigation
 
-*:UpgradeFromReason*
+*:RescriptUpgradeFromReason*
     Reads from the current .re / .res file, and creates an equivalent .res /
     .resi file in the same path. Make sure to delete the original .re file
     after writing your new .res file, otherwise the compiler will not compile.
