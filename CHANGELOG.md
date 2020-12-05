@@ -1,6 +1,6 @@
 # Changelog
 
-## Master (future 1.1.0)
+## 1.1.0
 
 **Improvements:**
 
