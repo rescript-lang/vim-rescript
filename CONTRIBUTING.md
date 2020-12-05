@@ -71,14 +71,18 @@ First, `curl` the tagged zip bundle from the `rescript-vscode` GH releases:
 curl -L https://github.com/rescript-lang/rescript-vscode/releases/download/1.0.0/rescript-vscode-1.0.0.vsix -o rescript-vscode-1.0.0.zip
 ```
 
-Unzip it, e.g.
+Unzip it and replace the `rescript-vscode` directory. Like this:
 
 ```
 unzip rescript-vscode-1.0.0.zip -d rescript-vscode-1.0.0
+rm -rf rescript-vscode
+
+mv rescript-vscode-1.0.0 rescript-vscode
 ```
 
 Lastly:
 
-- Remove the old vendored rescript-vscode folder, and check in the new one.
-- Do a last sanity check, delete the whole folder, do `git checkout --` to restore it, and run `node rescript-vscode-1.0.0/extension/server/out/server`
-- If the server started successfully, that means that everything works and we can proceed wrapping up by pushing / tagging the new release
+- Check in the changes and push to a working branch
+- Do a last sanity check, update your `PlugInstall` to point to the newly created branch. Run `PlugUpdate` and check if the LSP / vim setup works as expected
+- Run `:RescriptInfo` and check if the output reflects all the changes
+- To wrap up, merge the branch, update CHANGELOG, push a new tag
