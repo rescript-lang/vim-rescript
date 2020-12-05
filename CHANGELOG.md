@@ -6,6 +6,7 @@
 
 - Add detected `rescript-vscode` plugin version for `:RescriptInfo`
 - Upgrades to `rescript-vscode-1.0.1` with improved editor-support ([see changelog](https://github.com/rescript-lang/rescript-editor-support/blob/master/Changes.md#release-101-of-rescript-vscode))
+- Improved syntax highlighting for ReScript decorators
 
 **Breaking Changes:**
 
