@@ -30,10 +30,10 @@ lib/bs
 test/**/*.js
 doc/tags
 
-!rescript-vscode-1.0.0/extension/node_modules
-!rescript-vscode-1.0.0/extension/server/node_modules/
-!rescript-vscode-1.0.0/extension/server/darwin/rescript-editor-support.exe
-!rescript-vscode-1.0.0/extension/server/linux/rescript-editor-support.exe
-!rescript-vscode-1.0.0/extension/server/win32/rescript-editor-support.exe
+!rescript-vscode/extension/node_modules
+!rescript-vscode/extension/server/node_modules/
+!rescript-vscode/extension/server/darwin/rescript-editor-support.exe
+!rescript-vscode/extension/server/linux/rescript-editor-support.exe
+!rescript-vscode/extension/server/win32/rescript-editor-support.exe
 
-rescript-vscode-1.0.0/extension/server/node_modules/.bin/
+rescript-vscode/extension/server/node_modules/.bin/

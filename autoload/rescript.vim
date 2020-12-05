@@ -46,11 +46,9 @@ function! rescript#Init()
   let s:got_format_err = 0
   let s:got_build_err = 0
 
-
   if !exists("g:rescript_editor_support_exe")
-    let g:rescript_editor_support_exe = s:rescript_plugin_dir . "/rescript-vscode-1.0.0/extension/server/" . b:rescript_arch . "/rescript-editor-support.exe"
+    let g:rescript_editor_support_exe = s:rescript_plugin_dir . "/rescript-vscode/extension/server/" . b:rescript_arch . "/rescript-editor-support.exe"
   endif
-
 
   " Not sure why, but adding a ".;" doesn't find bsconfig when
   " the editor was started without a specific file within the project
@@ -66,6 +64,18 @@ endfunction
 
 function! s:DeleteLines(start, end) abort
     silent! execute a:start . ',' . a:end . 'delete _'
+endfunction
+
+function! rescript#GetRescriptVscodeVersion()
+  let l:out = readfile(s:rescript_plugin_dir . "/rescript-vscode/extension/package.json")
+
+  try
+    let l:json = json_decode(l:out)
+    return l:json.version
+  catch /.*/
+    echo "Could not find rescript-vscode version"
+    return "?"
+  endtry
 endfunction
 
 function! rescript#DetectVersion()
@@ -470,6 +480,7 @@ function! rescript#Info()
   echo "Detected Config File: " . g:rescript_project_config
   echo "Detected Project Root: " . g:rescript_project_root
   echo "Detected rescript_editor_support_exe: " . g:rescript_editor_support_exe
-  echo "Detected rescript_compile_exe" . g:rescript_compile_exe
-  echo "Detected rescript_build_exe" . g:rescript_build_exe
+  echo "Detected rescript_compile_exe: " . g:rescript_compile_exe
+  echo "Detected rescript_build_exe: " . g:rescript_build_exe
+  echo "Bundled rescript-vscode extension: " . rescript#GetRescriptVscodeVersion()
 endfunction

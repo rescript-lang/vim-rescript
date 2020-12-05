@@ -62,7 +62,7 @@ After the installation, open your coc config (`:CocConfig`) and add the followin
 "languageserver": {
   "rescript": {
     "enable": true,
-    "module": "~/.config/nvim/plugged/vim-rescript/rescript-vscode-1.0.0/extension/server/out/server.js",
+    "module": "~/.config/nvim/plugged/vim-rescript/rescript-vscode/extension/server/out/server.js",
     "args": ["--node-ipc"],
     "filetypes": ["rescript"],
     "rootPatterns": ["bsconfig.json"]
