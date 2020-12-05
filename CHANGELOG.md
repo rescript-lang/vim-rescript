@@ -2,8 +2,15 @@
 
 ## Master (future 1.1.0)
 
+**Improvements:**
+
 - Add detected `rescript-vscode` plugin version for `:RescriptInfo`
-- Move `rescript-vscode-1.0.0` to `rescript-vscode` (makes it easier to always point to the correct folder when upgrading)
+- Upgrades to `rescript-vscode-1.0.1` with improved editor-support ([see changelog](https://github.com/rescript-lang/rescript-editor-support/blob/master/Changes.md#release-101-of-rescript-vscode))
+
+**Breaking Changes:**
+
+- Moved `rescript-vscode-1.0.0` to `rescript-vscode` (make sure to update your coc-vim config to point to the new path!)
+
 
 ## 1.0.1
 
