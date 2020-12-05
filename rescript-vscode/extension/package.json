@@ -3,7 +3,7 @@
 	"description": "The official VSCode plugin for ReScript.",
 	"author": "chenglou",
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/rescript-lang/rescript-vscode"
@@ -39,7 +39,7 @@
 		],
 		"configuration": {
 			"type": "object",
-			"title": "Example configuration",
+			"title": "ReScript",
 			"properties": {
 				"languageServerExample.maxNumberOfProblems": {
 					"scope": "resource",
@@ -97,8 +97,6 @@
 		"typescript": "^3.9.4"
 	},
 	"dependencies": {
-		"@types/tmp": "^0.2.0",
-		"chokidar": "^3.4.2",
-		"tmp": "^0.2.1"
+		"chokidar": "^3.4.2"
 	}
 }

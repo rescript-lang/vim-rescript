@@ -22,13 +22,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseCompilerLogOutput = exports.parseDiagnosticLocation = exports.runBsbWatcherUsingValidBsbPath = exports.formatUsingValidBscPath = exports.findProjectRootOfFile = void 0;
+exports.parseCompilerLogOutput = exports.parseDiagnosticLocation = exports.runBsbWatcherUsingValidBsbPath = exports.formatUsingValidBscPath = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
 const c = __importStar(require("./constants"));
 const childProcess = __importStar(require("child_process"));
 const path = __importStar(require("path"));
 const t = __importStar(require("vscode-languageserver-types"));
-const tmp = __importStar(require("tmp"));
 const fs_1 = __importDefault(require("fs"));
+const os = __importStar(require("os"));
+let tempFilePrefix = "rescript_format_file_" + process.pid + "_";
+let tempFileId = 0;
+exports.createFileInTempDir = (extension = "") => {
+    let tempFileName = tempFilePrefix + tempFileId + extension;
+    tempFileId = tempFileId + 1;
+    return path.join(os.tmpdir(), tempFileName);
+};
 // TODO: races here?
 // TODO: this doesn't handle file:/// scheme
 exports.findProjectRootOfFile = (source) => {
@@ -47,13 +54,13 @@ exports.findProjectRootOfFile = (source) => {
     }
 };
 exports.formatUsingValidBscPath = (code, bscPath, isInterface) => {
-    // library cleans up after itself. No need to manually remove temp file
-    let tmpobj = tmp.fileSync();
     let extension = isInterface ? c.resiExt : c.resExt;
-    let fileToFormat = tmpobj.name + extension;
-    fs_1.default.writeFileSync(fileToFormat, code, { encoding: "utf-8" });
+    let formatTempFileFullPath = exports.createFileInTempDir(extension);
+    fs_1.default.writeFileSync(formatTempFileFullPath, code, {
+        encoding: "utf-8",
+    });
     try {
-        let result = childProcess.execFileSync(bscPath, ["-color", "never", "-format", fileToFormat], { stdio: "pipe" });
+        let result = childProcess.execFileSync(bscPath, ["-color", "never", "-format", formatTempFileFullPath], { stdio: "pipe" });
         return {
             kind: "success",
             result: result.toString(),
@@ -64,6 +71,10 @@ exports.formatUsingValidBscPath = (code, bscPath, isInterface) => {
             kind: "error",
             error: e.message,
         };
+    }
+    finally {
+        // async close is fine. We don't use this file name again
+        fs_1.default.unlink(formatTempFileFullPath, () => null);
     }
 };
 exports.runBsbWatcherUsingValidBsbPath = (bsbPath, projectRootPath) => {

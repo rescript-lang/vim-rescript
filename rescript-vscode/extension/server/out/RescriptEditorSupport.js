@@ -27,7 +27,6 @@ const url_1 = require("url");
 const utils = __importStar(require("./utils"));
 const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
-const tmp = __importStar(require("tmp"));
 const fs_1 = __importDefault(require("fs"));
 let binaryPath = path.join(path.dirname(__dirname), process.platform, "rescript-editor-support.exe");
 exports.binaryExists = fs_1.default.existsSync(binaryPath);
@@ -72,8 +71,7 @@ function runCompletionCommand(msg, code, onResult) {
         onResult(null);
     }
     else {
-        let tmpobj = tmp.fileSync();
-        let tmpname = tmpobj.name;
+        let tmpname = utils.createFileInTempDir();
         fs_1.default.writeFileSync(tmpname, code, { encoding: "utf-8" });
         let command = executable.binaryPath +
             " complete " +
@@ -85,7 +83,8 @@ function runCompletionCommand(msg, code, onResult) {
             " " +
             tmpname;
         child_process_1.exec(command, { cwd: executable.cwd }, function (_error, stdout, _stderr) {
-            tmpobj.removeCallback();
+            // async close is fine. We don't use this file name again
+            fs_1.default.unlink(tmpname, () => null);
             let result = JSON.parse(stdout);
             if (result && result[0]) {
                 onResult(result);
