@@ -1,5 +1,10 @@
 # Changelog
 
+## Master (future 1.1.0)
+
+- Add detected `rescript-vscode` plugin version for `:RescriptInfo`
+- Move `rescript-vscode-1.0.0` to `rescript-vscode` (makes it easier to always point to the correct folder when upgrading)
+
 ## 1.0.1
 
 - Fixes installation issues that required an additional `npm install` in the rescript-vscode vendor folder
