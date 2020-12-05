@@ -482,5 +482,5 @@ function! rescript#Info()
   echo "Detected rescript_editor_support_exe: " . g:rescript_editor_support_exe
   echo "Detected rescript_compile_exe: " . g:rescript_compile_exe
   echo "Detected rescript_build_exe: " . g:rescript_build_exe
-  echo "Using rescript-vscode version: " . rescript#GetRescriptVscodeVersion()
+  echo "Bundled rescript-vscode extension: " . rescript#GetRescriptVscodeVersion()
 endfunction
