@@ -68,7 +68,7 @@ We are currently vendoring rescript-vscode to provide all the binaries + LSP for
 First, `curl` the tagged zip bundle from the `rescript-vscode` GH releases:
 
 ```
-url -L https://github.com/rescript-lang/rescript-vscode/releases/download/1.0.0/rescript-vscode-1.0.0.vsix -o rescript-vscode-1.0.0.zip
+curl -L https://github.com/rescript-lang/rescript-vscode/releases/download/1.0.0/rescript-vscode-1.0.0.vsix -o rescript-vscode-1.0.0.zip
 ```
 
 Unzip it, e.g.
