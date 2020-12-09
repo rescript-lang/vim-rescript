@@ -1,5 +1,9 @@
 # Changelog
 
+## master
+
+- Fixes issue with long template strings breaking the syntax highlighting
+
 ## 1.1.0
 
 **Improvements:**
