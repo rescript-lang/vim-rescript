@@ -2,6 +2,8 @@ if exists("b:current_syntax")
   finish
 endif
 
+syntax sync fromstart
+
 " Boolean
 syntax keyword resBoolean true false
 
