@@ -2,6 +2,9 @@ if exists("b:current_syntax")
   finish
 endif
 
+" See https://github.com/rescript-lang/vim-rescript/issues/14
+syntax sync minlines=600
+
 " Boolean
 syntax keyword resBoolean true false
 
