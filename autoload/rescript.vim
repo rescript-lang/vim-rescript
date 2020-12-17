@@ -32,7 +32,7 @@ function! rescript#Init()
   endif
 
   " Looks for the nearest node_modules directory
-  let l:res_bin_dir = finddir('node_modules', ".;") . "/bs-platform/" . b:rescript_arch
+  let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . b:rescript_arch
 
   "if !exists("g:rescript_compile_exe")
   let g:rescript_compile_exe = l:res_bin_dir . "/bsc.exe"
