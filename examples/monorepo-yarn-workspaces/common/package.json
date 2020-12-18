@@ -1,12 +1,12 @@
 {
-  "name": "awewsomeness",
+  "name": "common",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "re:clean": "bsb -clean-world",
-    "re:build": "bsb -make-world",
-    "re:watch": "bsb -make-world -w"
+    "clean": "bsb -clean-world",
+    "build": "bsb -make-world",
+    "watch": "bsb -make-world -w"
   },
   "dependencies": {
     "reason-react": "^0.9.1"

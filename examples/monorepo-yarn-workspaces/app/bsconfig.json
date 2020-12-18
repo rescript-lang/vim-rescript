@@ -10,11 +10,12 @@
     "module": "commonjs",
     "in-source": true
   },
-  "suffix": ".bs.js",
+  "suffix": ".js",
   "bs-dependencies": [
     "reason-react",
-    "awewsomeness"
+    "common"
   ],
+  "pinned-dependencies": ["common"],
   "ppx-flags": [],
   "bsc-flags": ["-bs-super-errors", "-bs-no-version-header"],
   "warnings": {

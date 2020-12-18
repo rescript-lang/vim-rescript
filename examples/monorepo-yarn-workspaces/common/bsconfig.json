@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/rescript-lang/rescript-compiler/master/docs/docson/build-schema.json",
-  "name": "awewsomeness",
-  "namespace": "Awesomeness",
+  "name": "common",
+  "namespace": "Common",
   "version": "0.0.1",
   "sources": {
     "dir" : "src",
