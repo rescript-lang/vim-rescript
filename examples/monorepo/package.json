@@ -1,0 +1,10 @@
+{
+  "name": "rescript-yarn-workspaces-example",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "app",
+      "awewsomeness"
+    ]
+  }
+}

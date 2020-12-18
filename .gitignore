@@ -37,3 +37,5 @@ doc/tags
 !rescript-vscode/extension/server/win32/rescript-editor-support.exe
 
 rescript-vscode/extension/server/node_modules/.bin/
+
+examples/**/node_modules

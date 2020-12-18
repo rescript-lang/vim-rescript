@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/rescript-lang/rescript-compiler/master/docs/docson/build-schema.json",
+  "name": "awewsomeness",
+  "namespace": "Awesomeness",
+  "version": "0.0.1",
+  "sources": {
+    "dir" : "src",
+    "subdirs" : true
+  },
+  "package-specs": {
+    "module": "commonjs",
+    "in-source": true
+  },
+  "suffix": ".bs.js",
+  "bs-dependencies": [
+    "reason-react"
+  ],
+  "ppx-flags": [],
+  "bsc-flags": ["-bs-super-errors", "-bs-no-version-header"],
+  "warnings": {
+    "number": "-44",
+    "error": "+8+26+27+101"
+  },
+  "reason": {"react-jsx": 3}
+}
