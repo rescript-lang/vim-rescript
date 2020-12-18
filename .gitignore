@@ -40,4 +40,5 @@ rescript-vscode/extension/server/node_modules/.bin/
 
 examples/**/node_modules
 examples/**/lib
-examples/**/*.bs.js
+examples/**/src/*.js
+examples/**/.merlin
