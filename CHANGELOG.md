@@ -2,6 +2,7 @@
 
 ## master
 
+- Improves tooling detection (`bsc`, `bsb`) in a monorepo like setup (`yarn workspaces`)
 - Fixes issue with long template strings breaking the syntax highlighting
 
 ## 1.1.0
