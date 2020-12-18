@@ -39,3 +39,4 @@ doc/tags
 rescript-vscode/extension/server/node_modules/.bin/
 
 examples/**/node_modules
+examples/**/lib
