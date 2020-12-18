@@ -2,3 +2,5 @@ lib/
 node_modules/
 .merlin
 .bsb.lock
+
+src/*.js
