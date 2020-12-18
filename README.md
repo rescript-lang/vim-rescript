@@ -15,6 +15,7 @@
 - Filetype detection for `.res`, `.resi`
 - Basic automatic indentation
 - Includes LSP for coc-vim usage
+- Proper tooling detection for monorepo like setups (yarn workspaces)
 
 **Provided by vim-rescript commands:**
 - Formatting `.res` files w/ syntax error diagnostics in VIM quickfix
