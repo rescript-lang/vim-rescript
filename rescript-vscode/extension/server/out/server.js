@@ -102,7 +102,13 @@ let deleteProjectDiagnostics = (projectRootPath) => {
         projectsFiles.delete(projectRootPath);
     }
 };
-let compilerLogsWatcher = chokidar.watch([]).on("all", (_e, changedPath) => {
+let compilerLogsWatcher = chokidar
+    .watch([], {
+    awaitWriteFinish: {
+        stabilityThreshold: 1,
+    },
+})
+    .on("all", (_e, changedPath) => {
     sendUpdatedDiagnostics();
 });
 let stopWatchingCompilerLog = () => {
@@ -129,7 +135,7 @@ let openedFile = (fileUri, fileContent) => {
         // because otherwise the diagnostics info we'll display might be stale
         let bsbLockPath = path.join(projectRootPath, c.bsbLock);
         if (firstOpenFileOfProject && !fs_1.default.existsSync(bsbLockPath)) {
-            let bsbPath = path.join(projectRootPath, c.bsbPartialPath);
+            let bsbPath = path.join(projectRootPath, c.bsbNodePartialPath);
             // TODO: sometime stale .bsb.lock dangling. bsb -w knows .bsb.lock is
             // stale. Use that logic
             // TODO: close watcher when lang-server shuts down
@@ -406,11 +412,13 @@ process_1.default.on("message", (msg) => {
                 process_1.default.send(response);
             }
             else {
-                let projectRootPath = utils.findProjectRootOfFile(filePath);
-                if (projectRootPath == null) {
+                // See comment on findBscExeDirOfFile for why we need
+                // to recursively search for bsc.exe upward
+                let bscExeDir = utils.findBscExeDirOfFile(filePath);
+                if (bscExeDir === null) {
                     let params = {
                         type: p.MessageType.Error,
-                        message: `Cannot find a nearby ${c.bsconfigPartialPath}. It's needed for determining the project's root.`,
+                        message: `Cannot find a nearby ${c.bscExePartialPath}. It's needed for formatting.`,
                     };
                     let response = {
                         jsonrpc: c.jsonrpcVersion,
@@ -421,51 +429,36 @@ process_1.default.on("message", (msg) => {
                     process_1.default.send(response);
                 }
                 else {
-                    let bscPath = path.join(projectRootPath, c.bscPartialPath);
-                    if (!fs_1.default.existsSync(bscPath)) {
-                        let params = {
-                            type: p.MessageType.Error,
-                            message: `Cannot find a nearby ${c.bscPartialPath}. It's needed for formatting.`,
-                        };
+                    let resolvedBscPath = path.join(bscExeDir, c.bscExePartialPath);
+                    // code will always be defined here, even though technically it can be undefined
+                    let code = getOpenedFileContent(params.textDocument.uri);
+                    let formattedResult = utils.formatUsingValidBscPath(code, resolvedBscPath, extension === c.resiExt);
+                    if (formattedResult.kind === "success") {
+                        let result = [
+                            {
+                                range: {
+                                    start: { line: 0, character: 0 },
+                                    end: {
+                                        line: Number.MAX_VALUE,
+                                        character: Number.MAX_VALUE,
+                                    },
+                                },
+                                newText: formattedResult.result,
+                            },
+                        ];
                         let response = {
                             jsonrpc: c.jsonrpcVersion,
-                            method: "window/showMessage",
-                            params: params,
+                            id: msg.id,
+                            result: result,
                         };
-                        process_1.default.send(fakeSuccessResponse);
                         process_1.default.send(response);
                     }
                     else {
-                        // code will always be defined here, even though technically it can be undefined
-                        let code = getOpenedFileContent(params.textDocument.uri);
-                        let formattedResult = utils.formatUsingValidBscPath(code, bscPath, extension === c.resiExt);
-                        if (formattedResult.kind === "success") {
-                            let result = [
-                                {
-                                    range: {
-                                        start: { line: 0, character: 0 },
-                                        end: {
-                                            line: Number.MAX_VALUE,
-                                            character: Number.MAX_VALUE,
-                                        },
-                                    },
-                                    newText: formattedResult.result,
-                                },
-                            ];
-                            let response = {
-                                jsonrpc: c.jsonrpcVersion,
-                                id: msg.id,
-                                result: result,
-                            };
-                            process_1.default.send(response);
-                        }
-                        else {
-                            // let the diagnostics logic display the updated syntax errors,
-                            // from the build.
-                            // Again, not sending the actual errors. See fakeSuccessResponse
-                            // above for explanation
-                            process_1.default.send(fakeSuccessResponse);
-                        }
+                        // let the diagnostics logic display the updated syntax errors,
+                        // from the build.
+                        // Again, not sending the actual errors. See fakeSuccessResponse
+                        // above for explanation
+                        process_1.default.send(fakeSuccessResponse);
                     }
                 }
             }
@@ -493,7 +486,7 @@ process_1.default.on("message", (msg) => {
             msg.result.title === c.startBuildAction) {
             let msg_ = msg.result;
             let projectRootPath = msg_.projectRootPath;
-            let bsbPath = path.join(projectRootPath, c.bsbPartialPath);
+            let bsbPath = path.join(projectRootPath, c.bsbNodePartialPath);
             // TODO: sometime stale .bsb.lock dangling
             // TODO: close watcher when lang-server shuts down
             if (fs_1.default.existsSync(bsbPath)) {

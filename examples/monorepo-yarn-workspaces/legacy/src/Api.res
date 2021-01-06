@@ -1,0 +1,3 @@
+let queryUser = () => {
+  "my-user"
+}

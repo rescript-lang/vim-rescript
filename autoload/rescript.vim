@@ -21,18 +21,12 @@ function! s:ShowInPreview(fname, fileType, lines)
     endif
 endfunction
 
-" Inits the plugin variables, e.g. finding all the necessary binaries
-function! rescript#Init()
-  if has('macunix')
-    let b:rescript_arch = "darwin"
-  elseif has('win32')
-    let b:rescript_arch = "win32"
-  elseif has('unix')
-    let b:rescript_arch = "linux"
-  endif
-
+" Configures the project related globals based on the current buffer location
+" This is needed for supporting monorepos with multiple projects / multiple
+" bs-platform setups
+function! rescript#UpdateProjectEnv()
   " Looks for the nearest node_modules directory
-  let l:res_bin_dir = finddir('node_modules', ".;") . "/bs-platform/" . b:rescript_arch
+  let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . s:rescript_arch
 
   "if !exists("g:rescript_compile_exe")
   let g:rescript_compile_exe = l:res_bin_dir . "/bsc.exe"
@@ -42,17 +36,9 @@ function! rescript#Init()
   let g:rescript_build_exe = l:res_bin_dir . "/bsb.exe"
   "endif
 
-  " Needed for state tracking of the formatting error state
-  let s:got_format_err = 0
-  let s:got_build_err = 0
-
-  if !exists("g:rescript_editor_support_exe")
-    let g:rescript_editor_support_exe = s:rescript_plugin_dir . "/rescript-vscode/extension/server/" . b:rescript_arch . "/rescript-editor-support.exe"
-  endif
-
-  " Not sure why, but adding a ".;" doesn't find bsconfig when
-  " the editor was started without a specific file within the project
-  let g:rescript_project_config = findfile("bsconfig.json")
+  " Note that this doesn't find bsconfig when the editor was started without a
+  " specific file within the project
+  let g:rescript_project_config = findfile("bsconfig.json", ".;")
 
   " Try to find the nearest .git folder instead
   if g:rescript_project_config == ""
@@ -60,6 +46,31 @@ function! rescript#Init()
   else
     let g:rescript_project_root = fnamemodify(g:rescript_project_config, ":p:h")
   endif
+
+  " Make sure that our local working directory is in the rescript_project_root
+  exe "lcd " . g:rescript_project_root
+endfunction
+
+" Inits the plugin variables, e.g. finding all the plugin related binaries
+" and initialising some internal state for UI (error window etc.)
+function! rescript#Init()
+  if has('macunix')
+    let s:rescript_arch = "darwin"
+  elseif has('win32')
+    let s:rescript_arch = "win32"
+  elseif has('unix')
+    let s:rescript_arch = "linux"
+  endif
+
+  " Needed for state tracking of the formatting error state
+  let s:got_format_err = 0
+  let s:got_build_err = 0
+
+  if !exists("g:rescript_editor_support_exe")
+    let g:rescript_editor_support_exe = s:rescript_plugin_dir . "/rescript-vscode/extension/server/" . s:rescript_arch . "/rescript-editor-support.exe"
+  endif
+
+  call rescript#UpdateProjectEnv()
 endfunction
 
 function! s:DeleteLines(start, end) abort
@@ -79,6 +90,7 @@ function! rescript#GetRescriptVscodeVersion()
 endfunction
 
 function! rescript#DetectVersion()
+  call rescript#UpdateProjectEnv()
   let l:command = g:rescript_compile_exe . " -version"
 
   silent let l:output = system(l:command)
@@ -96,6 +108,8 @@ function! rescript#DetectVersion()
 endfunction
 
 function! rescript#Format()
+  call rescript#UpdateProjectEnv()
+
   let l:ext = expand("%:e")
 
   if matchstr(l:ext, 'resi\?') == ""
@@ -376,8 +390,15 @@ function! rescript#Complete(findstart, base)
   return l:ret
 endfunction
 
-function! rescript#BuildProject()
-  let out = system(g:rescript_build_exe)
+function! rescript#BuildProject(...)
+  call rescript#UpdateProjectEnv()
+
+  let l:cmd = g:rescript_build_exe
+  if a:0 ==? 1
+    let l:cmd = g:rescript_build_exe . " " . a:1
+  endif
+
+  let out = system(l:cmd)
 
   " We don't rely too heavily on exit codes. If there's a compiler.log,
   " then there is either an error or a warning, so we rely on the existence

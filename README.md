@@ -15,6 +15,7 @@
 - Filetype detection for `.res`, `.resi`
 - Basic automatic indentation
 - Includes LSP for coc-vim usage
+- Proper tooling detection for monorepo like setups (yarn workspaces)
 
 **Provided by vim-rescript commands:**
 - Formatting `.res` files w/ syntax error diagnostics in VIM quickfix
@@ -23,6 +24,12 @@
 - Jump to definition for current cursor position
 - Building the current projec w/ build diagnostics in VIM quickfix
 - Autocompletion w/ Vim's omnicomplete
+
+**Monorepo support:**
+
+The vim-rescript plugin automatically updates its project environment on each file open separately.
+- Tested for yarn workspaces (see [./examples/monorepo-yarn-workspaces])
+- **Note for non-LSP usage:** Always make sure to switch to a `.res` file **within the project you want to compile** before running `:RescriptBuild` etc.
 
 See `:h rescript` for the detailed [helpfile](./doc/rescript.txt).
 

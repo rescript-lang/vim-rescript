@@ -3,7 +3,7 @@
 	"description": "The official VSCode plugin for ReScript.",
 	"author": "chenglou",
 	"license": "MIT",
-	"version": "1.0.1",
+	"version": "1.0.4",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/rescript-lang/rescript-vscode"
@@ -23,6 +23,18 @@
 	],
 	"main": "./client/out/extension",
 	"contributes": {
+		"jsonValidation": [
+			{
+				"fileMatch": "bsconfig.json",
+				"url": "https://raw.githubusercontent.com/rescript-lang/rescript-compiler/master/docs/docson/build-schema.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "rescript",
+				"path": "./snippets.json"
+			}
+		],
 		"taskDefinitions_unused": [
 			{
 				"type": "bsb",

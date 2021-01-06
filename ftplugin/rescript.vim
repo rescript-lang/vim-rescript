@@ -8,3 +8,11 @@ endif
 let b:did_ftplugin = 1
 
 call rescript#Init()
+
+" On every *.res / *.resi file open, recalculate the project environment
+" This helps us to always make sure that we are working off the right
+" working directory etc
+augroup RescriptAutoProjectEnv
+  au!
+  au BufReadPost,BufNewFile *.res, *.resi call rescript#UpdateProjectEnv()
+augroup END

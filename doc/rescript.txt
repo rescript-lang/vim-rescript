@@ -118,7 +118,16 @@ COMMANDS                                                    *rescript-commands*
     after writing your new .res file, otherwise the compiler will not compile.
 
 *:RescriptBuild*
-    Builds your current project with g:rescript_build_exe
+    Builds your current project with g:rescript_build_exe (without -make-world
+    flag)
+
+*:RescriptBuildWorld*
+    Builds your current project with g:rescript_build_exe (with -make-world).
+    This is useful for building your ReScript dependencies as well.
+
+*:RescriptCleanWorld*
+    Cleans all project files + all ReScript dependencies. This is useful for
+    fixing stale caches (e.g. when upgrading ReScript versions). 
 
 *:RescriptTypeHint*
     Uses the g:rescript_editor_support_exe executable to extract

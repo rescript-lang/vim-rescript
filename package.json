@@ -1,24 +1,12 @@
 {
-  "name": "vim-rescript",
-  "version": "1.0.0",
-  "description": "## Features",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rescript-lang/vim-rescript.git"
-  },
+  "name": "vim-rescript-test",
+  "private": true,
+  "description": "This is only needed for our test framework",
+  "version": "0.0.0",
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/rescript-lang/vim-rescript/issues"
-  },
-  "homepage": "https://github.com/rescript-lang/vim-rescript#readme",
-  "dependencies": {
-    "bs-platform": "^8.3.3-dev.2",
-    "reason-react": "^0.9.1"
+  "license": "MIT",
+  "devDependencies": {
+    "bs-platform": "8.4.2"
   }
 }

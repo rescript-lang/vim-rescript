@@ -26,7 +26,7 @@
 
 .bsb.lock
 lib/bs
-/node_modules
+node_modules
 test/**/*.js
 doc/tags
 
@@ -37,3 +37,8 @@ doc/tags
 !rescript-vscode/extension/server/win32/rescript-editor-support.exe
 
 rescript-vscode/extension/server/node_modules/.bin/
+
+examples/**/node_modules
+examples/**/lib
+examples/**/src/*.js
+examples/**/.merlin

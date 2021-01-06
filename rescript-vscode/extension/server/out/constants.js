@@ -19,15 +19,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startBuildAction = exports.resiExt = exports.resExt = exports.compilerLogPartialPath = exports.bsconfigPartialPath = exports.bsbLock = exports.bsbPartialPath = exports.bscPartialPath = exports.jsonrpcVersion = void 0;
+exports.startBuildAction = exports.resiExt = exports.resExt = exports.compilerLogPartialPath = exports.bsconfigPartialPath = exports.bsbLock = exports.bsbNodePartialPath = exports.bscExePartialPath = exports.jsonrpcVersion = void 0;
 const path = __importStar(require("path"));
 // See https://microsoft.github.io/language-server-protocol/specification Abstract Message
 // version is fixed to 2.0
 exports.jsonrpcVersion = "2.0";
-exports.bscPartialPath = path.join("node_modules", "bs-platform", process.platform, "bsc.exe");
+exports.bscExePartialPath = path.join("node_modules", "bs-platform", process.platform, "bsc.exe");
 // can't use the native bsb since we might need the watcher -w flag, which is only in the js wrapper
 // export let bsbPartialPath = path.join('node_modules', 'bs-platform', process.platform, 'bsb.exe');
-exports.bsbPartialPath = path.join("node_modules", ".bin", "bsb");
+exports.bsbNodePartialPath = path.join("node_modules", ".bin", "bsb");
 exports.bsbLock = ".bsb.lock";
 exports.bsconfigPartialPath = "bsconfig.json";
 exports.compilerLogPartialPath = path.join("lib", "bs", ".compiler.log");
