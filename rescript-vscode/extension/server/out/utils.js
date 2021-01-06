@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseCompilerLogOutput = exports.parseDiagnosticLocation = exports.runBsbWatcherUsingValidBsbPath = exports.formatUsingValidBscPath = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
+exports.parseCompilerLogOutput = exports.parseDiagnosticLocation = exports.runBsbWatcherUsingValidBsbPath = exports.formatUsingValidBscPath = exports.findBscExeDirOfFile = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
 const c = __importStar(require("./constants"));
 const childProcess = __importStar(require("child_process"));
 const path = __importStar(require("path"));
@@ -50,6 +50,31 @@ exports.findProjectRootOfFile = (source) => {
         }
         else {
             return exports.findProjectRootOfFile(dir);
+        }
+    }
+};
+// TODO: races here?
+// TODO: this doesn't handle file:/// scheme
+// We need to recursively search for bs-platform/{platform}/bsc.exe upward from
+// the project's root, because in some setups, such as yarn workspace/monorepo,
+// the node_modules/bs-platform package might be hoisted up instead of alongside
+// the project root.
+// Also, if someone's ever formatting a regular project setup's dependency
+// (which is weird but whatever), they'll at least find an upward bs-platform
+// from the dependent.
+exports.findBscExeDirOfFile = (source) => {
+    let dir = path.dirname(source);
+    let bscPath = path.join(dir, c.bscExePartialPath);
+    if (fs_1.default.existsSync(bscPath)) {
+        return dir;
+    }
+    else {
+        if (dir === source) {
+            // reached the top
+            return null;
+        }
+        else {
+            return exports.findBscExeDirOfFile(dir);
         }
     }
 };
