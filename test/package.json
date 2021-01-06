@@ -1,0 +1,12 @@
+{
+  "name": "fixtures-8-4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "bs-platform": "8.4.2"
+  }
+}
