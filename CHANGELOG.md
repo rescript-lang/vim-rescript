@@ -4,6 +4,7 @@
 
 ** Improvements: **
 
+- Upgrade to `rescript-vscode@1.4.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/1.0.4/HISTORY.md#104))
 - Add proper monorepo support (`e.g. yarn workspaces`)
   - Detects `bsb` / `bsc` correctly for each buffer separately.
   - Heuristic for detecting the binaries: For the current file, find the nearest `node_modules/bs-platform` folder for the binaries

@@ -25,11 +25,11 @@
 - Building the current projec w/ build diagnostics in VIM quickfix
 - Autocompletion w/ Vim's omnicomplete
 
-
 **Monorepo support:**
 
 The vim-rescript plugin automatically updates its project environment on each file open separately.
 - Tested for yarn workspaces (see [./examples/monorepo-yarn-workspaces])
+- **Note for non-LSP usage:** Always make sure to switch to a `.res` file **within the project you want to compile** before running `:RescriptBuild` etc.
 
 See `:h rescript` for the detailed [helpfile](./doc/rescript.txt).
 
