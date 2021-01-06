@@ -2,18 +2,23 @@
 
 ## master
 
+## 1.2.0
+
 ** Improvements: **
 
 - Upgrade to `rescript-vscode@1.4.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/1.0.4/HISTORY.md#104))
 - Add proper monorepo support (`e.g. yarn workspaces`)
-  - Detects `bsb` / `bsc` correctly for each buffer separately.
+  - Detects `bsb` / `bsc` correctly for each file separately and finds the right (sub-)project context
   - Heuristic for detecting the binaries: For the current file, find the nearest `node_modules/bs-platform` folder for the binaries
   - Adds an `augroup RescriptAutoProjectEnv` that sets the environment on every `.res` / `.resi` related read / write / new file event
   - Will also update the environment on each `format` and `build` call to make it sync up for all non-rescript buffers
   - On each env update, it updates the local working directory to the updated project root path as well
+- Add new commands `:RescriptBuildWorld` and `:RescriptCleanWorld` for cleaning / building all sources + dependencies
+
+** Bugfixes **
+
 - Fixes issue with long template strings breaking the syntax highlighting
 - Fixes an issue where `:RescriptBuild` would fail in non-rescript buffers due to a wrongly scoped script variable (was buffer only)
-- Add new commands `:RescriptBuildWorld` and `:RescriptCleanWorld` for cleaning / building all sources + dependencies
 
 ## 1.1.0
 

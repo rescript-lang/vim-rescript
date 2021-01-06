@@ -52,10 +52,10 @@ Plugin 'rescript-lang/vim-rescript'
 NeoBundle 'rescript-lang/vim-rescript'
 ```
 
-You can also pin your installation to specific tags:
+You can also pin your installation to specific tags (check our releases [here](https://github.com/rescript-lang/vim-rescript/releases)):
 
 ```
-Plug 'rescript-lang/vim-rescript', {'tag': 'v1.1.0'}
+Plug 'rescript-lang/vim-rescript', {'tag': 'v1.2.0'}
 ```
 
 ## Using vim-rescript with COC
