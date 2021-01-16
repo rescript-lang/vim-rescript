@@ -56,8 +56,8 @@ syntax match resArrowPipe "\v\|\>"
 syntax match resArrowPipe "\v\@\@"
 
 " Comment
-syntax region resComment start="//" end="$" contains=resTodo,@Spell
-syntax region resComment start="/\*\s*" end="\*/" contains=@Spell,resTodo,resComment
+syntax region resSingleLineComment start="//" end="$" contains=resTodo,@Spell
+syntax region resMultiLineComment start="/\*\s*" end="\*/" contains=@Spell,resTodo,resMultiLineComment
 
 syntax keyword resTodo contained TODO FIXME XXX NOTE
 
@@ -93,7 +93,8 @@ highlight default link resKeyword Keyword
 highlight default link resType Type
 highlight default link resOperator Operator
 highlight default link resArrowPipe Operator
-highlight default link resComment Comment
+highlight default link resSingleLineComment Comment
+highlight default link resMultiLineComment Comment
 highlight default link resTodo TODO
 highlight default link resChar Character
 highlight default link resNumber Number
