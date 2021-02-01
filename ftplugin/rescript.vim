@@ -14,5 +14,5 @@ call rescript#Init()
 " working directory etc
 augroup RescriptAutoProjectEnv
   au!
-  au BufReadPost,BufNewFile *.res, *.resi call rescript#UpdateProjectEnv()
+  au BufReadPost,BufNewFile *.res,*.resi call rescript#UpdateProjectEnv()
 augroup END
