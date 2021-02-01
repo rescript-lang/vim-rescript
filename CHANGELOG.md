@@ -1,6 +1,10 @@
 # Changelog
 
 ## master
+**Bugfixes**
+
+- Fix a syntax error in autocmd file pattern which caused weird error on buffer reload
+- Fix highlighting of nested multiline comments
 
 ## 1.2.0
 
