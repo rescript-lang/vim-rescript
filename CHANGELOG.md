@@ -1,14 +1,22 @@
 # Changelog
 
 ## master
-**Bugfixes**
+
+## 1.3.0
+
+**Improvements:**
+
+- Upgrade to `rescript-vscode@1.6.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#106)
+  - Improved type-hinting, and better Windows support for our LSP service
+
+**Bugfixes:**
 
 - Fix a syntax error in autocmd file pattern which caused weird error on buffer reload
 - Fix highlighting of nested multiline comments
 
 ## 1.2.0
 
-** Improvements: **
+**Improvements:**
 
 - Upgrade to `rescript-vscode@1.4.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/1.0.4/HISTORY.md#104))
 - Add proper monorepo support (`e.g. yarn workspaces`)
@@ -19,7 +27,7 @@
   - On each env update, it updates the local working directory to the updated project root path as well
 - Add new commands `:RescriptBuildWorld` and `:RescriptCleanWorld` for cleaning / building all sources + dependencies
 
-** Bugfixes **
+**Bugfixes:**
 
 - Fixes issue with long template strings breaking the syntax highlighting
 - Fixes an issue where `:RescriptBuild` would fail in non-rescript buffers due to a wrongly scoped script variable (was buffer only)
