@@ -37,62 +37,69 @@ let findExecutable = (uri) => {
         return null;
     }
     else {
-        return { binaryPath, filePath, cwd: projectRootPath };
+        return {
+            binaryPath: binaryPath,
+            filePath: filePath,
+            cwd: projectRootPath,
+        };
     }
 };
-function runDumpCommand(msg, onResult) {
+function runDumpCommand(msg) {
     let executable = findExecutable(msg.params.textDocument.uri);
     if (executable == null) {
-        onResult(null);
+        return null;
     }
-    else {
-        let command = executable.binaryPath +
-            " dump " +
-            executable.filePath +
-            ":" +
-            msg.params.position.line +
-            ":" +
-            msg.params.position.character;
-        child_process_1.exec(command, { cwd: executable.cwd }, function (_error, stdout, _stderr) {
-            let result = JSON.parse(stdout);
-            if (result && result[0]) {
-                onResult(result[0]);
-            }
-            else {
-                onResult(null);
-            }
+    let command = executable.filePath +
+        ":" +
+        msg.params.position.line +
+        ":" +
+        msg.params.position.character;
+    try {
+        let stdout = child_process_1.execFileSync(executable.binaryPath, ["dump", command], {
+            cwd: executable.cwd,
         });
+        let parsed = JSON.parse(stdout.toString());
+        if (parsed && parsed[0]) {
+            return parsed[0];
+        }
+        else {
+            return null;
+        }
+    }
+    catch (error) {
+        // TODO: @cristianoc any exception possible?
+        return null;
     }
 }
 exports.runDumpCommand = runDumpCommand;
-function runCompletionCommand(msg, code, onResult) {
+function runCompletionCommand(msg, code) {
     let executable = findExecutable(msg.params.textDocument.uri);
     if (executable == null) {
-        onResult(null);
+        return null;
     }
-    else {
-        let tmpname = utils.createFileInTempDir();
-        fs_1.default.writeFileSync(tmpname, code, { encoding: "utf-8" });
-        let command = executable.binaryPath +
-            " complete " +
-            executable.filePath +
-            ":" +
-            msg.params.position.line +
-            ":" +
-            msg.params.position.character +
-            " " +
-            tmpname;
-        child_process_1.exec(command, { cwd: executable.cwd }, function (_error, stdout, _stderr) {
-            // async close is fine. We don't use this file name again
-            fs_1.default.unlink(tmpname, () => null);
-            let result = JSON.parse(stdout);
-            if (result && result[0]) {
-                onResult(result);
-            }
-            else {
-                onResult(null);
-            }
-        });
+    let tmpname = utils.createFileInTempDir();
+    fs_1.default.writeFileSync(tmpname, code, { encoding: "utf-8" });
+    let command = executable.filePath +
+        ":" +
+        msg.params.position.line +
+        ":" +
+        msg.params.position.character;
+    try {
+        let stdout = child_process_1.execFileSync(executable.binaryPath, ["complete", command, tmpname], { cwd: executable.cwd });
+        let parsed = JSON.parse(stdout.toString());
+        if (parsed && parsed[0]) {
+            return parsed;
+        }
+        else {
+            return null;
+        }
+    }
+    catch (error) {
+        // TODO: @cristianoc any exception possible?
+        return null;
+    }
+    finally {
+        fs_1.default.unlink(tmpname, () => null);
     }
 }
 exports.runCompletionCommand = runCompletionCommand;

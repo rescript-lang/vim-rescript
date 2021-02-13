@@ -28,7 +28,12 @@
     "commentBlock": {
       "name": "comment.block",
       "begin": "/\\*",
-      "end": "\\*/"
+      "end": "\\*/",
+      "patterns": [
+        {
+          "include": "#commentBlock"
+        }
+      ]
     },
     "punctuations": {
       "patterns": [
@@ -194,16 +199,12 @@
     "operator": {
       "patterns": [
         {
-          "match": "->|\\|\\||&&|\\+\\+|\\*\\*|\\+\\.|\\+|-\\.|-|\\*\\.|\\*|/\\.|/|\\.\\.\\.|\\.\\.|\\|>|===|==|\\^|:=|!|>=(?! *\\?)|<=",
-          "name": "keyword.operator"
-        }
-      ]
-    },
-    "assignment": {
-      "patterns": [
+          "match": "->|\\|\\||&&|\\+\\+|\\*\\*|\\+\\.|\\+|-\\.|-|\\*\\.|\\*|/\\.|/|\\.\\.\\.|\\.\\.|===|==|\\^|:=|!|>=(?! *\\?)|<=|=",
+          "name": "keyword.operator keyword"
+        },
         {
-          "match": "=",
-          "name": "keyword.operator.assignment"
+          "match": "\\|>",
+          "name": "invalid.deprecated"
         }
       ]
     },
@@ -279,12 +280,26 @@
     "attribute": {
       "patterns": [
         {
-          "match": "(@@?)([A-Za-z_][A-Za-z0-9_\\.]*)",
+          "match": "(@)(splice)",
           "captures": {
             "1": {
               "name": "storage.modifier punctuation.definition.annotation"
             },
             "2": {
+              "name": "invalid.illegal"
+            }
+          }
+        },
+        {
+          "match": "(@@?)(bs\\.)?([A-Za-z_][A-Za-z0-9_\\.]*)",
+          "captures": {
+            "1": {
+              "name": "storage.modifier punctuation.definition.annotation"
+            },
+            "2": {
+              "name": "invalid.deprecated"
+            },
+            "3": {
               "name": "variable.annotation"
             }
           }
@@ -316,7 +331,7 @@
           }
         },
         {
-          "match": "</([A-Z_][0-9a-zA-Z_]*)"
+          "match": "</([a-z_][0-9a-zA-Z_]*)"
         },
         {
           "match": "<([A-Z_][0-9a-zA-Z_]*)",
@@ -456,9 +471,6 @@
     },
     {
       "include": "#operator"
-    },
-    {
-      "include": "#assignment"
     },
     {
       "include": "#number"

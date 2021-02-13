@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseCompilerLogOutput = exports.parseDiagnosticLocation = exports.runBsbWatcherUsingValidBsbPath = exports.formatUsingValidBscPath = exports.findBscExeDirOfFile = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
+exports.parseCompilerLogOutput = exports.runBsbWatcherUsingValidBsbNodePath = exports.formatUsingValidBscExePath = exports.findBscExeDirOfFile = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
 const c = __importStar(require("./constants"));
 const childProcess = __importStar(require("child_process"));
 const path = __importStar(require("path"));
@@ -78,14 +78,14 @@ exports.findBscExeDirOfFile = (source) => {
         }
     }
 };
-exports.formatUsingValidBscPath = (code, bscPath, isInterface) => {
+exports.formatUsingValidBscExePath = (code, bscExePath, isInterface) => {
     let extension = isInterface ? c.resiExt : c.resExt;
     let formatTempFileFullPath = exports.createFileInTempDir(extension);
     fs_1.default.writeFileSync(formatTempFileFullPath, code, {
         encoding: "utf-8",
     });
     try {
-        let result = childProcess.execFileSync(bscPath, ["-color", "never", "-format", formatTempFileFullPath], { stdio: "pipe" });
+        let result = childProcess.execFileSync(bscExePath, ["-color", "never", "-format", formatTempFileFullPath]);
         return {
             kind: "success",
             result: result.toString(),
@@ -102,96 +102,138 @@ exports.formatUsingValidBscPath = (code, bscPath, isInterface) => {
         fs_1.default.unlink(formatTempFileFullPath, () => null);
     }
 };
-exports.runBsbWatcherUsingValidBsbPath = (bsbPath, projectRootPath) => {
-    let process = childProcess.execFile(bsbPath, ["-w"], {
-        cwd: projectRootPath,
-    });
-    return process;
-    // try {
-    // 	let result = childProcess.execFileSync(bsbPath, [], { stdio: 'pipe', cwd: projectRootPath })
-    // 	return {
-    // 		kind: 'success',
-    // 		result: result.toString(),
-    // 	}
-    // } catch (e) {
-    // 	return {
-    // 		kind: 'error',
-    // 		error: e.message,
-    // 	}
-    // }
-};
-exports.parseDiagnosticLocation = (location) => {
-    // example output location:
-    // 3:9
-    // 3:5-8
-    // 3:9-6:1
-    // language-server position is 0-based. Ours is 1-based. Don't forget to convert
-    // also, our end character is inclusive. Language-server's is exclusive
-    let isRange = location.indexOf("-") >= 0;
-    if (isRange) {
-        let [from, to] = location.split("-");
-        let [fromLine, fromChar] = from.split(":");
-        let isSingleLine = to.indexOf(":") >= 0;
-        let [toLine, toChar] = isSingleLine ? to.split(":") : [fromLine, to];
-        return {
-            start: {
-                line: parseInt(fromLine) - 1,
-                character: parseInt(fromChar) - 1,
-            },
-            end: { line: parseInt(toLine) - 1, character: parseInt(toChar) },
-        };
+exports.runBsbWatcherUsingValidBsbNodePath = (bsbNodePath, projectRootPath) => {
+    if (process.platform === "win32") {
+        /*
+          - a node.js script in node_modules/.bin on windows is wrapped in a
+            batch script wrapper (there's also a regular binary of the same name on
+            windows, but that one's a shell script wrapper for cygwin). More info:
+            https://github.com/npm/cmd-shim/blob/c5118da34126e6639361fe9706a5ff07e726ed45/index.js#L1
+          - a batch script adds the suffix .cmd to the script
+          - you can't call batch scripts through the regular `execFile`:
+            https://nodejs.org/api/child_process.html#child_process_spawning_bat_and_cmd_files_on_windows
+          - So you have to use `exec` instead, and make sure you quote the path
+            (since the path might have spaces), which `execFile` would have done
+            for you under the hood
+        */
+        return childProcess.exec(`"${bsbNodePath}".cmd -w`, {
+            cwd: projectRootPath,
+        });
     }
     else {
-        let [line, char] = location.split(":");
-        let start = { line: parseInt(line) - 1, character: parseInt(char) };
+        return childProcess.execFile(bsbNodePath, ["-w"], {
+            cwd: projectRootPath,
+        });
+    }
+};
+// Logic for parsing .compiler.log
+/* example .compiler.log content:
+
+#Start(1600519680823)
+
+  Syntax error!
+  /Users/chenglou/github/reason-react/src/test.res:1:8-2:3
+
+  1 │ let a =
+  2 │ let b =
+  3 │
+
+  This let-binding misses an expression
+
+
+  Warning number 8
+  /Users/chenglou/github/reason-react/src/test.res:3:5-8
+
+  1 │ let a = j`😀`
+  2 │ let b = `😀`
+  3 │ let None = None
+  4 │ let bla: int = "
+  5 │   hi
+
+  You forgot to handle a possible case here, for example:
+  Some _
+
+
+  We've found a bug for you!
+  /Users/chenglou/github/reason-react/src/test.res:3:9
+
+  1 │ let a = 1
+  2 │ let b = "hi"
+  3 │ let a = b + 1
+
+  This has type: string
+  Somewhere wanted: int
+
+#Done(1600519680836)
+*/
+// parser helpers
+let normalizeFileForWindows = (file) => {
+    return process.platform === "win32" ? `file:\\\\\\${file}` : file;
+};
+let parseFileAndRange = (fileAndRange) => {
+    // https://github.com/rescript-lang/rescript-compiler/blob/0a3f4bb32ca81e89cefd5a912b8795878836f883/jscomp/super_errors/super_location.ml#L15-L25
+    /* The file + location format can be:
+      a/b.res <- fallback, no location available (usually due to bad ppx...)
+      a/b.res:10:20
+      a/b.res:10:20-21     <- last number here is the end char of line 10
+      a/b.res:10:20-30:11
+    */
+    let regex = /(.+)\:(\d+)\:(\d+)(-(\d+)(\:(\d+))?)?$/;
+    /*            ^^ file
+                        ^^^ start line
+                               ^^^ start character
+                                    ^ optional range
+                                      ^^^ end line or chararacter
+                                              ^^^ end character
+    */
+    // for the trimming, see https://github.com/rescript-lang/rescript-vscode/pull/71#issuecomment-769160576
+    let trimmedFileAndRange = fileAndRange.trim();
+    let match = trimmedFileAndRange.match(regex);
+    if (match === null) {
+        // no location! Though LSP insist that we provide at least a dummy location
         return {
+            file: normalizeFileForWindows(trimmedFileAndRange),
+            range: {
+                start: { line: 0, character: 0 },
+                end: { line: 0, character: 0 },
+            },
+        };
+    }
+    let [_source, file, startLine, startChar, optionalEndGroup, endLineOrChar, _colonPlusEndCharOrNothing, endCharOrNothing,] = match;
+    // language-server position is 0-based. Ours is 1-based. Convert
+    // also, our end character is inclusive. Language-server's is exclusive
+    let range;
+    if (optionalEndGroup == null) {
+        let start = {
+            line: parseInt(startLine) - 1,
+            character: parseInt(startChar),
+        };
+        range = {
             start: start,
             end: start,
         };
     }
+    else {
+        let isSingleLine = endCharOrNothing == null;
+        let [endLine, endChar] = isSingleLine
+            ? [startLine, endLineOrChar]
+            : [endLineOrChar, endCharOrNothing];
+        range = {
+            start: {
+                line: parseInt(startLine) - 1,
+                character: parseInt(startChar) - 1,
+            },
+            end: { line: parseInt(endLine) - 1, character: parseInt(endChar) },
+        };
+    }
+    return {
+        file: normalizeFileForWindows(file),
+        range,
+    };
 };
 exports.parseCompilerLogOutput = (content) => {
-    /* example .compiler.log file content that we're gonna parse:
-
-#Start(1600519680823)
-
-    Syntax error!
-    /Users/chenglou/github/reason-react/src/test.res:1:8-2:3
-
-    1 │ let a =
-    2 │ let b =
-    3 │
-
-    This let-binding misses an expression
-
-
-    Warning number 8
-    /Users/chenglou/github/reason-react/src/test.res:3:5-8
-
-    1 │ let a = j`😀`
-    2 │ let b = `😀`
-    3 │ let None = None
-    4 │ let bla: int = "
-    5 │   hi
-
-    You forgot to handle a possible case here, for example:
-    Some _
-
-
-    We've found a bug for you!
-    /Users/chenglou/github/reason-react/src/test.res:3:9
-
-    1 │ let a = 1
-    2 │ let b = "hi"
-    3 │ let a = b + 1
-
-    This has type: string
-    Somewhere wanted: int
-
-#Done(1600519680836)
-    */
     let parsedDiagnostics = [];
-    let lines = content.split("\n");
+    let lines = content.split(os.EOL);
     let done = false;
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
@@ -256,10 +298,8 @@ exports.parseCompilerLogOutput = (content) => {
     }
     let result = {};
     parsedDiagnostics.forEach((parsedDiagnostic) => {
-        let [fileAndLocation, ...diagnosticMessage] = parsedDiagnostic.content;
-        let locationSeparator = fileAndLocation.indexOf(":");
-        let file = fileAndLocation.substring(2, locationSeparator);
-        let location = fileAndLocation.substring(locationSeparator + 1);
+        let [fileAndRangeLine, ...diagnosticMessage] = parsedDiagnostic.content;
+        let { file, range } = parseFileAndRange(fileAndRangeLine);
         if (result[file] == null) {
             result[file] = [];
         }
@@ -275,7 +315,7 @@ exports.parseCompilerLogOutput = (content) => {
             severity: parsedDiagnostic.severity,
             tags: parsedDiagnostic.tag === undefined ? [] : [parsedDiagnostic.tag],
             code: parsedDiagnostic.code,
-            range: exports.parseDiagnosticLocation(location),
+            range,
             source: "ReScript",
             message: cleanedUpDiagnostic,
         });

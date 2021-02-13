@@ -323,20 +323,17 @@ process_1.default.on("message", (msg) => {
                 // type Hover = {contents: MarkedString | MarkedString[] | MarkupContent, range?: Range}
                 result: null,
             };
-            RescriptEditorSupport_1.runDumpCommand(msg, (result) => {
-                if (result && result.hover) {
-                    let hoverResponse = {
-                        ...emptyHoverResponse,
-                        result: {
-                            contents: result.hover,
-                        },
-                    };
-                    process_1.default.send(hoverResponse);
-                }
-                else {
-                    process_1.default.send(emptyHoverResponse);
-                }
-            });
+            let result = RescriptEditorSupport_1.runDumpCommand(msg);
+            if (result !== null && result.hover != null) {
+                let hoverResponse = {
+                    ...emptyHoverResponse,
+                    result: { contents: result.hover },
+                };
+                process_1.default.send(hoverResponse);
+            }
+            else {
+                process_1.default.send(emptyHoverResponse);
+            }
         }
         else if (msg.method === p.DefinitionRequest.method) {
             // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
@@ -346,21 +343,20 @@ process_1.default.on("message", (msg) => {
                 // result should be: Location | Array<Location> | Array<LocationLink> | null
                 result: null,
             };
-            RescriptEditorSupport_1.runDumpCommand(msg, (result) => {
-                if (result && result.definition) {
-                    let definitionResponse = {
-                        ...emptyDefinitionResponse,
-                        result: {
-                            uri: result.definition.uri || msg.params.textDocument.uri,
-                            range: result.definition.range,
-                        },
-                    };
-                    process_1.default.send(definitionResponse);
-                }
-                else {
-                    process_1.default.send(emptyDefinitionResponse);
-                }
-            });
+            let result = RescriptEditorSupport_1.runDumpCommand(msg);
+            if (result !== null && result.definition != null) {
+                let definitionResponse = {
+                    ...emptyDefinitionResponse,
+                    result: {
+                        uri: result.definition.uri || msg.params.textDocument.uri,
+                        range: result.definition.range,
+                    },
+                };
+                process_1.default.send(definitionResponse);
+            }
+            else {
+                process_1.default.send(emptyDefinitionResponse);
+            }
         }
         else if (msg.method === p.CompletionRequest.method) {
             let emptyCompletionResponse = {
@@ -369,18 +365,17 @@ process_1.default.on("message", (msg) => {
                 result: null,
             };
             let code = getOpenedFileContent(msg.params.textDocument.uri);
-            RescriptEditorSupport_1.runCompletionCommand(msg, code, (result) => {
-                if (result) {
-                    let definitionResponse = {
-                        ...emptyCompletionResponse,
-                        result: result,
-                    };
-                    process_1.default.send(definitionResponse);
-                }
-                else {
-                    process_1.default.send(emptyCompletionResponse);
-                }
-            });
+            let result = RescriptEditorSupport_1.runCompletionCommand(msg, code);
+            if (result === null) {
+                process_1.default.send(emptyCompletionResponse);
+            }
+            else {
+                let definitionResponse = {
+                    ...emptyCompletionResponse,
+                    result: result,
+                };
+                process_1.default.send(definitionResponse);
+            }
         }
         else if (msg.method === p.DocumentFormattingRequest.method) {
             // technically, a formatting failure should reply with the error. Sadly
@@ -429,10 +424,10 @@ process_1.default.on("message", (msg) => {
                     process_1.default.send(response);
                 }
                 else {
-                    let resolvedBscPath = path.join(bscExeDir, c.bscExePartialPath);
+                    let resolvedBscExePath = path.join(bscExeDir, c.bscExePartialPath);
                     // code will always be defined here, even though technically it can be undefined
                     let code = getOpenedFileContent(params.textDocument.uri);
-                    let formattedResult = utils.formatUsingValidBscPath(code, resolvedBscPath, extension === c.resiExt);
+                    let formattedResult = utils.formatUsingValidBscExePath(code, resolvedBscExePath, extension === c.resiExt);
                     if (formattedResult.kind === "success") {
                         let result = [
                             {
@@ -486,14 +481,16 @@ process_1.default.on("message", (msg) => {
             msg.result.title === c.startBuildAction) {
             let msg_ = msg.result;
             let projectRootPath = msg_.projectRootPath;
-            let bsbPath = path.join(projectRootPath, c.bsbNodePartialPath);
+            let bsbNodePath = path.join(projectRootPath, c.bsbNodePartialPath);
             // TODO: sometime stale .bsb.lock dangling
-            // TODO: close watcher when lang-server shuts down
-            if (fs_1.default.existsSync(bsbPath)) {
-                let bsbProcess = utils.runBsbWatcherUsingValidBsbPath(bsbPath, projectRootPath);
+            // TODO: close watcher when lang-server shuts down. However, by Node's
+            // default, these subprocesses are automatically killed when this
+            // language-server process exits
+            if (fs_1.default.existsSync(bsbNodePath)) {
+                let bsbProcess = utils.runBsbWatcherUsingValidBsbNodePath(bsbNodePath, projectRootPath);
                 let root = projectsFiles.get(projectRootPath);
                 root.bsbWatcherByEditor = bsbProcess;
-                bsbProcess.on("message", (a) => console.log("wtf======", a));
+                // bsbProcess.on("message", (a) => console.log(a));
             }
         }
     }
