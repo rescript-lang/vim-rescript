@@ -55,4 +55,8 @@ module Test = {
   }
 }
 
+let poly1 = #test
+let poly2 = #\"foobar"
+let poly3 = #"foobar"
+
 let callbackU = (. a) => Js.log(a)
