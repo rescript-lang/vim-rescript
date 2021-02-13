@@ -6,7 +6,7 @@
 
 **Improvements:**
 
-- Upgrade to `rescript-vscode@1.6.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#106)
+- Upgrade to `rescript-vscode@1.6.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#106))
   - Improved type-hinting, and better Windows support for our LSP service
 
 **Bugfixes:**
