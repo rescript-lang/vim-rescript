@@ -1,7 +1,7 @@
 /* * this is a test */
 type t
 
-@bs.val external test: t => unit = "test"
+@val external test: t => unit = "test"
 
 /* * Decodes a JSON value into a [bool]
     
@@ -50,13 +50,14 @@ module Test = {
     let inputRef = React.useRef(Js.Nullable.null)
 
     <div>
-      <input ref={ReactDOM.Ref.domRef(inputRef)} /> <button> {React.string("Click me " ++ name)} </button>
+      <input ref={ReactDOM.Ref.domRef(inputRef)} />
+      <button> {React.string("Click me " ++ name)} </button>
     </div>
   }
 }
 
 let poly1 = #test
-let poly2 = #\"foobar"
-let poly3 = #"foobar"
+let poly2 = #foobar
+let poly3 = #foobar
 
 let callbackU = (. a) => Js.log(a)

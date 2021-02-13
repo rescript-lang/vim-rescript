@@ -12,7 +12,7 @@ let asdf = <Bar />
 
 let foo = Bar.Test.make
 
-let fdsa = <Bar.Test />
+let fdsa = <Bar.Test name="test" />
 
 let plus1 = a => {
   Js.log("called plus 1")

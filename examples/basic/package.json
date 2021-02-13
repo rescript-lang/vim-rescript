@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "bs-platform": "8.4.2",
+    "bs-platform": "9.0.0",
     "reason-react": "0.9.1"
   }
 }
