@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Language="en-US" Id="rescript-vscode" Version="1.0.4" Publisher="chenglou92"/>
+    <Identity Language="en-US" Id="rescript-vscode" Version="1.0.6" Publisher="chenglou92"/>
     <DisplayName>rescript-vscode</DisplayName>
     <Description xml:space="preserve">The official VSCode plugin for ReScript.</Description>
     <Tags>rescript,language-server,snippet,json,ReScript,__ext_res,__ext_resi</Tags>
-    <Categories></Categories>
+    <Categories>Programming Languages,Snippets,Linters,Formatters</Categories>
     <GalleryFlags>Public</GalleryFlags>
     <Badges></Badges>
     <Properties>
@@ -39,6 +39,6 @@
   <Dependencies/>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
-    <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Content.License" Path="extension/LICENSE.txt" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/logo.png" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Content.Changelog" Path="extension/CHANGELOG.md" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Content.License" Path="extension/LICENSE.txt" Addressable="true" /><Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/logo.png" Addressable="true" />
   </Assets>
 </PackageManifest>

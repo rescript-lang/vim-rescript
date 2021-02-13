@@ -40,13 +40,19 @@ type what = A(string) | B(int)
 
 let u = {name: "test"}
 
+let labelTest = (~test: string) => {
+  "Hello " ++ test
+}
+
 module Test = {
   @react.component
-  let make = () => {
+  let make = (~name) => {
     let inputRef = React.useRef(Js.Nullable.null)
 
     <div>
-      <input ref={ReactDOM.Ref.domRef(inputRef)} /> <button> {React.string("Click me")} </button>
+      <input ref={ReactDOM.Ref.domRef(inputRef)} /> <button> {React.string("Click me " ++ name)} </button>
     </div>
   }
 }
+
+let callbackU = (. a) => Js.log(a)
