@@ -72,7 +72,6 @@ syntax match resFloat "-\=\<\d\(_\|\d\)*\.\?\(_\|\d\)*\([eE][-+]\=\d\(_\|\d\)*\)
 
 " Module / Constructor
 syntax match resModuleOrVariant "\v<[A-Z][A-Za-z0-9_'$]*"
-syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
 syntax match resModuleChain "\v<[A-Z][A-Za-z0-9_'$]*\."
 
 " Attribute
@@ -87,6 +86,10 @@ syntax match resInterpolationVariable "\v\$[a-z_][A-Za-z0-0_'$]*" contained
 syntax region resString start="\v`" end="\v`" contains=resInterpolationVariable
 syntax region resString start="\v[a-z]`" end="\v`" contains=resInterpolationVariable
 
+" Polymorphic variants
+syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
+syntax match resPolyVariant "\v#\".*\""
+syntax match resPolyVariant "\v#\\\".*\""
 
 highlight default link resBoolean Boolean
 highlight default link resKeyword Keyword
