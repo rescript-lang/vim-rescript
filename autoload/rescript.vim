@@ -29,16 +29,16 @@ function! rescript#UpdateProjectEnv()
   let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . s:rescript_arch
 
   "if !exists("g:rescript_compile_exe")
-  let g:rescript_compile_exe = l:res_bin_dir . "/bsc.exe"
+  let g:rescript_compile_exe = getcwd() . "/" . l:res_bin_dir . "/bsc.exe"
   "endif
 
   "if !exists("g:rescript_build_exe")
-  let g:rescript_build_exe = l:res_bin_dir . "/bsb.exe"
+  let g:rescript_build_exe = getcwd() . "/" . l:res_bin_dir . "/bsb.exe"
   "endif
 
   " Note that this doesn't find bsconfig when the editor was started without a
   " specific file within the project
-  let g:rescript_project_config = findfile("bsconfig.json", ".;")
+  let g:rescript_project_config = getcwd() . "/" . findfile("bsconfig.json", ".;")
 
   " Try to find the nearest .git folder instead
   if g:rescript_project_config == ""
@@ -48,7 +48,7 @@ function! rescript#UpdateProjectEnv()
   endif
 
   " Make sure that our local working directory is in the rescript_project_root
-  exe "lcd " . g:rescript_project_root
+  "exe "lcd " . g:rescript_project_root
 endfunction
 
 " Inits the plugin variables, e.g. finding all the plugin related binaries
@@ -93,7 +93,9 @@ function! rescript#DetectVersion()
   call rescript#UpdateProjectEnv()
   let l:command = g:rescript_compile_exe . " -version"
 
+  exe "lcd " . g:rescript_project_root
   silent let l:output = system(l:command)
+  exe "lcd -"
 
   let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+.*\) (.*')
 
@@ -134,7 +136,9 @@ function! rescript#Format()
   " bsc -format myFile.res > tempfile
   let l:command = g:rescript_compile_exe . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
 
+  exe "lcd " . g:rescript_project_root
   silent let l:out = systemlist(l:command) 
+  exe "lcd -"
 
   let l:stderr = readfile(l:stderr_tmpname)
 
@@ -398,7 +402,9 @@ function! rescript#BuildProject(...)
     let l:cmd = g:rescript_build_exe . " " . a:1
   endif
 
+  exe "lcd " . g:rescript_project_root
   let out = system(l:cmd)
+  exe "lcd -"
 
   " We don't rely too heavily on exit codes. If there's a compiler.log,
   " then there is either an error or a warning, so we rely on the existence
@@ -492,7 +498,6 @@ function! rescript#ReasonToRescript()
     echo "Could not reformat Reason file to ReScript"
   endif
 endfunction
-
 
 function! rescript#Info()
   let l:version = "ReScript version: " . rescript#DetectVersion()
