@@ -2,9 +2,13 @@
 
 ## master
 
+**Improvements:**
+
+- Improved syntax highlighting for polyvariants [#31](https://github.com/rescript-lang/vim-rescript/pull/31)
+
 **Bugfixes:**
 
-- Fix an issue that causes the plugin to change cwd (e.g. in a monorepo setup)
+- Fix an issue that causes the plugin to change cwd (e.g. in a monorepo setup) [#32](https://github.com/rescript-lang/vim-rescript/pull/32)
 
 ## 1.3.0
 
