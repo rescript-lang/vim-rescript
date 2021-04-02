@@ -2,6 +2,10 @@
 
 ## master
 
+**Bugfixes:**
+
+- Fix an issue that causes the plugin to change cwd (e.g. in a monorepo setup)
+
 ## 1.3.0
 
 **Improvements:**
