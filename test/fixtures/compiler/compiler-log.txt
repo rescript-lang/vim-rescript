@@ -1,7 +1,7 @@
 #Start(1402242571131)
 
   Syntax error!
-  /Users/ryyppy/Projects/reason-association/vim-rescript/src/foo.res:12:6
+  /Users/rescript/Projects/vim-rescript/src/foo.res:12:6
 
   10 │ let f = "test"
   11 │
