@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Language="en-US" Id="rescript-vscode" Version="1.0.6" Publisher="chenglou92"/>
+    <Identity Language="en-US" Id="rescript-vscode" Version="1.0.7" Publisher="chenglou92"/>
     <DisplayName>rescript-vscode</DisplayName>
     <Description xml:space="preserve">The official VSCode plugin for ReScript.</Description>
     <Tags>rescript,language-server,snippet,json,ReScript,__ext_res,__ext_resi</Tags>
