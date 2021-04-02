@@ -268,7 +268,7 @@ process_1.default.on("message", (msg) => {
                     hoverProvider: RescriptEditorSupport_1.binaryExists,
                     definitionProvider: RescriptEditorSupport_1.binaryExists,
                     completionProvider: RescriptEditorSupport_1.binaryExists
-                        ? { triggerCharacters: ["."] }
+                        ? { triggerCharacters: [".", ">", "@", "~"] }
                         : undefined,
                 },
             };

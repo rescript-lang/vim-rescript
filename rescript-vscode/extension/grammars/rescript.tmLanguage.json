@@ -15,7 +15,7 @@
     },
     "RE_KEYWORDS": {
       "name": "keyword.control",
-      "match": "\\b(and|as|assert|begin|class|constraint|done|downto|exception|external|fun|functor|inherit|lazy|let|pub|mutable|new|nonrec|object|of|or|pri|rec|then|to|val|virtual|try|catch|finally|do|else|for|if|switch|while|import|library|export|module|in|raise|private)\\b"
+      "match": "\\b(and|as|assert|constraint|downto|else|exception|external|false|for|if|in|include|lazy|let|module|mutable|of|open|rec|switch|to|true|try|type|when|while|with)\\b"
     },
     "RE_LITERAL": {
       "name": "constant.language",
@@ -230,7 +230,7 @@
         }
       ]
     },
-    "array": {
+    "bracketAccess": {
       "patterns": [
         {
           "match": "\\[",
@@ -261,57 +261,40 @@
         }
       ]
     },
-    "objectAccess": {
-      "patterns": [
-        {
-          "match": "\\b[a-z_][0-9a-zA-Z_]*(\\[)",
-          "captures": {
-            "1": {
-              "name": "punctuation.section.brackets.begin"
-            }
-          }
-        },
-        {
-          "match": "\\]",
-          "name": "punctuation.section.brackets.end"
-        }
-      ]
-    },
     "attribute": {
       "patterns": [
         {
-          "match": "(@)(splice)",
+          "match": "(%%?|@@?)([A-Za-z_][A-Za-z0-9_\\.]*)",
           "captures": {
             "1": {
               "name": "storage.modifier punctuation.definition.annotation"
             },
             "2": {
-              "name": "invalid.illegal"
-            }
-          }
-        },
-        {
-          "match": "(@@?)(bs\\.)?([A-Za-z_][A-Za-z0-9_\\.]*)",
-          "captures": {
-            "1": {
-              "name": "storage.modifier punctuation.definition.annotation"
-            },
-            "2": {
-              "name": "invalid.deprecated"
-            },
-            "3": {
-              "name": "variable.annotation"
-            }
-          }
-        },
-        {
-          "match": "(%%?)([A-Za-z_][A-Za-z0-9_\\.]*)",
-          "captures": {
-            "1": {
-              "name": "storage.modifier punctuation.definition.annotation"
-            },
-            "2": {
-              "name": "variable.annotation"
+              "patterns": [
+                {
+                  "match": "bs\\.send\\.pipe",
+                  "name": "invalid.deprecated"
+                },
+                {
+                  "match": "splice",
+                  "name": "invalid.illegal"
+                },
+                {
+                  "match": "(bs\\.)?([A-Za-z_][A-Za-z0-9_\\.]*)",
+                  "captures": {
+                    "1": {
+                      "name": "invalid.deprecated"
+                    },
+                    "2": {
+                      "name": "variable.annotation"
+                    }
+                  }
+                },
+                {
+                  "match": "[A-Za-z_][A-Za-z0-9_\\.]*",
+                  "name": "variable.annotation"
+                }
+              ]
             }
           }
         }
@@ -461,10 +444,7 @@
       "include": "#list"
     },
     {
-      "include": "#objectAccess"
-    },
-    {
-      "include": "#array"
+      "include": "#bracketAccess"
     },
     {
       "include": "#jsx"
