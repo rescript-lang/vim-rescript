@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.4.0
+
 **Improvements:**
 
 - Upgrade to `rescript-vscode@1.7.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#107))
