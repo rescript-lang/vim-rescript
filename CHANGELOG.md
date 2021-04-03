@@ -7,7 +7,21 @@
 **Improvements:**
 
 - Upgrade to `rescript-vscode@1.7.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#107))
-  - Please note that auto-completetion for `@` / `->` / `~` is not implemented yet
+  - Includes autocompletion for `->` / `~` (labeled arguments).
+
+Example:
+
+```res
+let l = Belt.List.make(3, 1)
+l-> //starting here, you will get suggestions for functions that accept a Belt.List.t
+
+let test = (~name: string, ~age: int) => {
+  Js.log2(name, age)
+}
+
+test(~ // starting here, you will get suggestions for `name` and `age`
+```
+
 - Improved syntax highlighting for polyvariants [#31](https://github.com/rescript-lang/vim-rescript/pull/31)
 
 **Bugfixes:**
