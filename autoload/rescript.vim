@@ -26,7 +26,12 @@ endfunction
 " bs-platform setups
 function! rescript#UpdateProjectEnv()
   " Looks for the nearest node_modules directory
-  let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . s:rescript_arch
+  let l:res_bin_dir = finddir('node_modules/rescript/', ".;") . s:rescript_arch
+
+  if l:res_bin_dir == s:rescript_arch
+    " look for bs-platform if rescript node module not found
+    let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . s:rescript_arch
+  endif
 
   "if !exists("g:rescript_compile_exe")
   let g:rescript_compile_exe = getcwd() . "/" . l:res_bin_dir . "/bsc.exe"
