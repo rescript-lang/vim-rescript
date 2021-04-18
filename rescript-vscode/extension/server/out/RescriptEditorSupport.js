@@ -72,6 +72,7 @@ function runDumpCommand(msg) {
     }
 }
 exports.runDumpCommand = runDumpCommand;
+// TODO: the result will never be null soon when the updated binary syncs
 function runCompletionCommand(msg, code) {
     let executable = findExecutable(msg.params.textDocument.uri);
     if (executable == null) {

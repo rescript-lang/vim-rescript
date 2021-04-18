@@ -3,7 +3,7 @@
 	"description": "The official VSCode plugin for ReScript.",
 	"author": "chenglou",
 	"license": "MIT",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/rescript-lang/rescript-vscode"
@@ -99,7 +99,8 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"clean": "rm -r client/out server/out",
+		"vscode:prepublish": "npm run clean && npm run compile",
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",

@@ -26,6 +26,7 @@ const process_1 = __importDefault(require("process"));
 const p = __importStar(require("vscode-languageserver-protocol"));
 const m = __importStar(require("vscode-jsonrpc/lib/messages"));
 const v = __importStar(require("vscode-languageserver"));
+const rpc = __importStar(require("vscode-jsonrpc"));
 const path = __importStar(require("path"));
 const fs_1 = __importDefault(require("fs"));
 // TODO: check DidChangeWatchedFilesNotification.
@@ -45,6 +46,8 @@ let shutdownRequestAlreadyReceived = false;
 let stupidFileContentCache = new Map();
 let projectsFiles = new Map();
 // ^ caching AND states AND distributed system. Why does LSP has to be stupid like this
+// will be properly defined later depending on the mode (stdio/node-rpc)
+let send = (_) => { };
 let sendUpdatedDiagnostics = () => {
     projectsFiles.forEach(({ filesWithDiagnostics }, projectRootPath) => {
         let content = fs_1.default.readFileSync(path.join(projectRootPath, c.compilerLogPartialPath), { encoding: "utf-8" });
@@ -60,7 +63,7 @@ let sendUpdatedDiagnostics = () => {
                 method: "textDocument/publishDiagnostics",
                 params: params,
             };
-            process_1.default.send(notification);
+            send(notification);
             filesWithDiagnostics.add(file);
         });
         if (done) {
@@ -77,7 +80,7 @@ let sendUpdatedDiagnostics = () => {
                         method: "textDocument/publishDiagnostics",
                         params: params,
                     };
-                    process_1.default.send(notification);
+                    send(notification);
                     filesWithDiagnostics.delete(file);
                 }
             });
@@ -97,7 +100,7 @@ let deleteProjectDiagnostics = (projectRootPath) => {
                 method: "textDocument/publishDiagnostics",
                 params: params,
             };
-            process_1.default.send(notification);
+            send(notification);
         });
         projectsFiles.delete(projectRootPath);
     }
@@ -155,7 +158,7 @@ let openedFile = (fileUri, fileContent) => {
                     method: "window/showMessageRequest",
                     params: params,
                 };
-                process_1.default.send(request);
+                send(request);
                 // the client might send us back the "start build" action, which we'll
                 // handle in the isResponseMessage check in the message handling way
                 // below
@@ -199,7 +202,23 @@ let getOpenedFileContent = (fileUri) => {
     console_1.assert(content != null);
     return content;
 };
-process_1.default.on("message", (msg) => {
+// Start listening now!
+// We support two modes: the regular node RPC mode for VSCode, and the --stdio
+// mode for other editors The latter is _technically unsupported_. It's an
+// implementation detail that might change at any time
+if (process_1.default.argv.includes("--stdio")) {
+    let writer = new rpc.StreamMessageWriter(process_1.default.stdout);
+    let reader = new rpc.StreamMessageReader(process_1.default.stdin);
+    // proper `this` scope for writer
+    send = (msg) => writer.write(msg);
+    reader.listen(onMessage);
+}
+else {
+    // proper `this` scope for process
+    send = (msg) => process_1.default.send(msg);
+    process_1.default.on("message", onMessage);
+}
+function onMessage(msg) {
     if (m.isNotificationMessage(msg)) {
         // notification message, aka the client ends it and doesn't want a reply
         if (!initialized && msg.method !== "exit") {
@@ -253,7 +272,7 @@ process_1.default.on("message", (msg) => {
                     message: "Server not initialized.",
                 },
             };
-            process_1.default.send(response);
+            send(response);
         }
         else if (msg.method === "initialize") {
             // send the list of features we support
@@ -278,7 +297,7 @@ process_1.default.on("message", (msg) => {
                 result: result,
             };
             initialized = true;
-            process_1.default.send(response);
+            send(response);
         }
         else if (msg.method === "initialized") {
             // sent from client after initialize. Nothing to do for now
@@ -287,7 +306,7 @@ process_1.default.on("message", (msg) => {
                 id: msg.id,
                 result: null,
             };
-            process_1.default.send(response);
+            send(response);
         }
         else if (msg.method === "shutdown") {
             // https://microsoft.github.io/language-server-protocol/specification#shutdown
@@ -300,7 +319,7 @@ process_1.default.on("message", (msg) => {
                         message: `Language server already received the shutdown request`,
                     },
                 };
-                process_1.default.send(response);
+                send(response);
             }
             else {
                 shutdownRequestAlreadyReceived = true;
@@ -312,7 +331,7 @@ process_1.default.on("message", (msg) => {
                     id: msg.id,
                     result: null,
                 };
-                process_1.default.send(response);
+                send(response);
             }
         }
         else if (msg.method === p.HoverRequest.method) {
@@ -329,10 +348,10 @@ process_1.default.on("message", (msg) => {
                     ...emptyHoverResponse,
                     result: { contents: result.hover },
                 };
-                process_1.default.send(hoverResponse);
+                send(hoverResponse);
             }
             else {
-                process_1.default.send(emptyHoverResponse);
+                send(emptyHoverResponse);
             }
         }
         else if (msg.method === p.DefinitionRequest.method) {
@@ -352,30 +371,20 @@ process_1.default.on("message", (msg) => {
                         range: result.definition.range,
                     },
                 };
-                process_1.default.send(definitionResponse);
+                send(definitionResponse);
             }
             else {
-                process_1.default.send(emptyDefinitionResponse);
+                send(emptyDefinitionResponse);
             }
         }
         else if (msg.method === p.CompletionRequest.method) {
-            let emptyCompletionResponse = {
+            let code = getOpenedFileContent(msg.params.textDocument.uri);
+            let completionResponse = {
                 jsonrpc: c.jsonrpcVersion,
                 id: msg.id,
-                result: null,
+                result: RescriptEditorSupport_1.runCompletionCommand(msg, code),
             };
-            let code = getOpenedFileContent(msg.params.textDocument.uri);
-            let result = RescriptEditorSupport_1.runCompletionCommand(msg, code);
-            if (result === null) {
-                process_1.default.send(emptyCompletionResponse);
-            }
-            else {
-                let definitionResponse = {
-                    ...emptyCompletionResponse,
-                    result: result,
-                };
-                process_1.default.send(definitionResponse);
-            }
+            send(completionResponse);
         }
         else if (msg.method === p.DocumentFormattingRequest.method) {
             // technically, a formatting failure should reply with the error. Sadly
@@ -403,8 +412,8 @@ process_1.default.on("message", (msg) => {
                     method: "window/showMessage",
                     params: params,
                 };
-                process_1.default.send(fakeSuccessResponse);
-                process_1.default.send(response);
+                send(fakeSuccessResponse);
+                send(response);
             }
             else {
                 // See comment on findBscExeDirOfFile for why we need
@@ -413,30 +422,32 @@ process_1.default.on("message", (msg) => {
                 if (bscExeDir === null) {
                     let params = {
                         type: p.MessageType.Error,
-                        message: `Cannot find a nearby ${c.bscExePartialPath}. It's needed for formatting.`,
+                        message: `Cannot find a nearby bsc.exe in bs-platform or rescript. It's needed for formatting.`,
                     };
                     let response = {
                         jsonrpc: c.jsonrpcVersion,
                         method: "window/showMessage",
                         params: params,
                     };
-                    process_1.default.send(fakeSuccessResponse);
-                    process_1.default.send(response);
+                    send(fakeSuccessResponse);
+                    send(response);
                 }
                 else {
-                    let resolvedBscExePath = path.join(bscExeDir, c.bscExePartialPath);
+                    let bscExePath1 = path.join(bscExeDir, c.bscExeReScriptPartialPath);
+                    let bscExePath2 = path.join(bscExeDir, c.bscExePartialPath);
+                    let resolvedBscExePath = fs_1.default.existsSync(bscExePath1)
+                        ? bscExePath1
+                        : bscExePath2;
                     // code will always be defined here, even though technically it can be undefined
                     let code = getOpenedFileContent(params.textDocument.uri);
                     let formattedResult = utils.formatUsingValidBscExePath(code, resolvedBscExePath, extension === c.resiExt);
                     if (formattedResult.kind === "success") {
+                        let max = formattedResult.result.length;
                         let result = [
                             {
                                 range: {
                                     start: { line: 0, character: 0 },
-                                    end: {
-                                        line: Number.MAX_VALUE,
-                                        character: Number.MAX_VALUE,
-                                    },
+                                    end: { line: max, character: max },
                                 },
                                 newText: formattedResult.result,
                             },
@@ -446,14 +457,14 @@ process_1.default.on("message", (msg) => {
                             id: msg.id,
                             result: result,
                         };
-                        process_1.default.send(response);
+                        send(response);
                     }
                     else {
                         // let the diagnostics logic display the updated syntax errors,
                         // from the build.
                         // Again, not sending the actual errors. See fakeSuccessResponse
                         // above for explanation
-                        process_1.default.send(fakeSuccessResponse);
+                        send(fakeSuccessResponse);
                     }
                 }
             }
@@ -467,7 +478,7 @@ process_1.default.on("message", (msg) => {
                     message: "Unrecognized editor request.",
                 },
             };
-            process_1.default.send(response);
+            send(response);
         }
     }
     else if (m.isResponseMessage(msg)) {
@@ -494,5 +505,5 @@ process_1.default.on("message", (msg) => {
             }
         }
     }
-});
+}
 //# sourceMappingURL=server.js.map

@@ -64,8 +64,9 @@ exports.findProjectRootOfFile = (source) => {
 // from the dependent.
 exports.findBscExeDirOfFile = (source) => {
     let dir = path.dirname(source);
-    let bscPath = path.join(dir, c.bscExePartialPath);
-    if (fs_1.default.existsSync(bscPath)) {
+    let bscExePath1 = path.join(dir, c.bscExeReScriptPartialPath);
+    let bscExePath2 = path.join(dir, c.bscExePartialPath);
+    if (fs_1.default.existsSync(bscExePath1) || fs_1.default.existsSync(bscExePath2)) {
         return dir;
     }
     else {
@@ -85,7 +86,12 @@ exports.formatUsingValidBscExePath = (code, bscExePath, isInterface) => {
         encoding: "utf-8",
     });
     try {
-        let result = childProcess.execFileSync(bscExePath, ["-color", "never", "-format", formatTempFileFullPath]);
+        let result = childProcess.execFileSync(bscExePath, [
+            "-color",
+            "never",
+            "-format",
+            formatTempFileFullPath,
+        ]);
         return {
             kind: "success",
             result: result.toString(),
@@ -286,6 +292,9 @@ exports.parseCompilerLogOutput = (content) => {
                 content: [],
             });
         }
+        else if (line.startsWith("#Start(")) {
+            // do nothing for now
+        }
         else if (line.startsWith("#Done(")) {
             done = true;
         }
@@ -300,6 +309,16 @@ exports.parseCompilerLogOutput = (content) => {
             //   10 ┆
         }
         else if (line.startsWith("  ")) {
+            // part of the actual diagnostics message
+            parsedDiagnostics[parsedDiagnostics.length - 1].content.push(line.slice(2));
+        }
+        else if (line.trim() != "") {
+            // We'll assume that everything else is also part of the diagnostics too.
+            // Most of these should have been indented 2 spaces; sadly, some of them
+            // aren't (e.g. outcome printer printing badly, and certain old ocaml type
+            // messages not printing with indent). We used to get bug reports and fix
+            // the messages, but that strategy turned out too slow. One day we should
+            // revert to not having this branch...
             parsedDiagnostics[parsedDiagnostics.length - 1].content.push(line);
         }
     }
@@ -310,21 +329,14 @@ exports.parseCompilerLogOutput = (content) => {
         if (result[file] == null) {
             result[file] = [];
         }
-        let cleanedUpDiagnostic = diagnosticMessage
-            .map((line) => {
-            // remove the spaces in front
-            return line.slice(2);
-        })
-            .join("\n")
-            // remove start and end whitespaces/newlines
-            .trim() + "\n";
         result[file].push({
             severity: parsedDiagnostic.severity,
             tags: parsedDiagnostic.tag === undefined ? [] : [parsedDiagnostic.tag],
             code: parsedDiagnostic.code,
             range,
             source: "ReScript",
-            message: cleanedUpDiagnostic,
+            // remove start and end whitespaces/newlines
+            message: diagnosticMessage.join("\n").trim() + "\n",
         });
     });
     return { done, result };
