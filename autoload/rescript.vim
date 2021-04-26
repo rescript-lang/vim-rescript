@@ -42,8 +42,8 @@ function! rescript#UpdateProjectEnv()
   endif
 
   " These variables are only used in legacy mode (bs-platform based projects)
-  let g:rescript_compile_exe = getcwd() . "/" . l:res_bin_dir . "/bsc.exe"
-  let g:rescript_build_exe = getcwd() . "/" . l:res_bin_dir . "/bsb.exe"
+  let g:rescript_bsc_exe = getcwd() . "/" . l:res_bin_dir . "/bsc.exe"
+  let g:rescript_bsb_exe = getcwd() . "/" . l:res_bin_dir . "/bsb.exe"
 
   " Note that this doesn't find bsconfig when the editor was started without a
   " specific file within the project
@@ -86,7 +86,7 @@ function! s:DeleteLines(start, end) abort
     silent! execute a:start . ',' . a:end . 'delete _'
 endfunction
 
-function! rescript#GetRescriptVscodeVersion()
+function! rescript#GetRescriptServerVersion()
   let l:out = readfile(s:rescript_plugin_dir . "/server/package.json")
 
   try
@@ -98,24 +98,25 @@ function! rescript#GetRescriptVscodeVersion()
   endtry
 endfunction
 
+" Retrieves the package.json version of either rescript or bs-platform
 function! rescript#DetectVersion()
   call rescript#UpdateProjectEnv()
-  let l:command = g:rescript_compile_exe . " -version"
 
-  exe "lcd " . g:rescript_project_root
-  silent let l:output = system(l:command)
-  exe "lcd -"
-
-  let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+.*\) (.*')
-
-  if len(l:version_list) < 2
-    let s:rescript_version = "0"
+  if g:rescript_legacy_mode ==? 1
+    let l:pkg_json = fnamemodify(g:rescript_bsc_exe, ":h") . "/../package.json"
   else
-    let s:rescript_version = l:version_list[1]
+    let l:pkg_json = fnamemodify(g:rescript_exe, ":h") . "/../package.json"
   endif
 
-  
-  return s:rescript_version
+  let l:out = readfile(l:pkg_json)
+
+  try
+    let l:json = json_decode(l:out)
+    return l:json.version
+  catch /.*/
+    echo "Could not read rescript version"
+    return "?"
+  endtry
 endfunction
 
 function! rescript#Format()
@@ -143,7 +144,7 @@ function! rescript#Format()
   call writefile(getline(1, '$'), l:tmpname)
 
   " bsc -format myFile.res > tempfile
-  let l:command = g:rescript_compile_exe . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
+  let l:command = g:rescript_bsc_exe . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
 
   exe "lcd " . g:rescript_project_root
   silent let l:out = systemlist(l:command) 
@@ -381,10 +382,10 @@ function! rescript#Clean(...)
   if g:rescript_legacy_mode ==? 1
     if l:with_deps ==? 1
       " bsb -clean-world
-      let l:cmd = g:rescript_build_exe . " -clean-world"
+      let l:cmd = g:rescript_bsb_exe . " -clean-world"
     else
       " bsb -clean
-      let l:cmd = g:rescript_build_exe . " -clean"
+      let l:cmd = g:rescript_bsb_exe . " -clean"
     endif
   else
     if l:with_deps ==? 1
@@ -417,10 +418,10 @@ function! rescript#Build(...)
 
   " If in legacy mode, run bsb
   if g:rescript_legacy_mode ==? 1
-    let l:cmd = g:rescript_build_exe
+    let l:cmd = g:rescript_bsb_exe
     if l:with_deps ==? 1
       " bsb -make-world
-      let l:cmd = g:rescript_build_exe . " -make-world"
+      let l:cmd = g:rescript_bsb_exe . " -make-world"
     endif
   else
     " Otherwise we are in modern mode and use rescript.exe
@@ -510,7 +511,7 @@ function! rescript#ReasonToRescript()
     echo "Current buffer is not a .re / .rei file... Do nothing."
     return
   endif
-  let l:command = g:rescript_compile_exe . " -format " . @%
+  let l:command = g:rescript_bsc_exe . " -format " . @%
 
   silent let l:out = systemlist(l:command)
   if v:shell_error ==? 0
@@ -543,11 +544,11 @@ function! rescript#Info()
   echo "Detected rescript_analysis_exe: " . g:rescript_analysis_exe
 
   if g:rescript_legacy_mode ==? 1
-    echo "Detected rescript_compile_exe: " . g:rescript_compile_exe
-    echo "Detected rescript_build_exe: " . g:rescript_build_exe
+    echo "Detected rescript_bsc_exe: " . g:rescript_bsc_exe
+    echo "Detected rescript_bsb_exe: " . g:rescript_bsb_exe
   else
     echo "Detected rescript_exe: " . g:rescript_exe
   endif
 
-  echo "Bundled rescript-vscode extension: " . rescript#GetRescriptVscodeVersion()
+  echo "Bundled rescript server version: " . rescript#GetRescriptServerVersion()
 endfunction

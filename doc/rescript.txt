@@ -45,7 +45,8 @@ The plugin switches into "legacy mode" whenever it detects a project that is
 based on the `bs-platform` npm package. This mode ensures compatibility for
 older codebases that didn't migrate to our `rescript` npm package yet.
 
-When in legacy mode, the plugin uses g:rescript_build_exe instead of g:rescript_exe.
+When in legacy mode, the plugin uses g:rescript_bsb_exe and g:rescript_bsc_exe
+instead of g:rescript_exe.
 
 ===============================================================================
 CONFIG                                                      *rescript-config*
