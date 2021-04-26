@@ -4,9 +4,12 @@ endif
 let g:loaded_vim_rescript = 1
 
 command! RescriptFormat call rescript#Format() 
-command! RescriptBuild call rescript#BuildProject() 
-command! RescriptBuildWorld call rescript#BuildProject("-make-world")
-command! RescriptCleanWorld call rescript#BuildProject("-clean-world")
+command! RescriptBuild call rescript#Build() 
+command! RescriptBuildWithDeps call rescript#Build(1) 
+
+command! RescriptClean call rescript#Clean()
+command! RescriptCleanWithDeps call rescript#Clean(1)
+
 command! RescriptTypeHint call rescript#TypeHint()
 command! RescriptInfo call rescript#Info()
 command! RescriptJumpToDefinition call rescript#JumpToDefinition()

@@ -1,7 +1,5 @@
-" Links to the reference implementation:
-" - https://github.com/rescript-lang/rescript-vscode/blob/master/server/src/utils.ts
-" - https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md
-"
+" Link to the reference implementation:
+" https://github.com/rescript-lang/rescript-vscode/blob/0dbf2eb9cdb0bd6d95be1aee88b73830feecb5cc/server/src/utils.ts#L129-L329
 
 
 " Parses all syntax errors from the output of the ReScript compiler /
