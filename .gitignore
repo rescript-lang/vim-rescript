@@ -30,13 +30,14 @@ node_modules
 test/**/*.js
 doc/tags
 
-!rescript-vscode/extension/node_modules
-!rescript-vscode/extension/server/node_modules/
-!rescript-vscode/extension/server/darwin/rescript-editor-support.exe
-!rescript-vscode/extension/server/linux/rescript-editor-support.exe
-!rescript-vscode/extension/server/win32/rescript-editor-support.exe
+# We don't need that file
+server/analysis_binaries/README.md
 
-rescript-vscode/extension/server/node_modules/.bin/
+# We need to vendor node_modules and all the executables
+!server/node_modules/
+!server/analysis_binaries/darwin-run.exe
+!server/analysis_binaries/linux-run.exe
+!server/analysis_binaries/win32-run.exe
 
 examples/**/node_modules
 examples/**/lib
