@@ -24,7 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const process_1 = __importDefault(require("process"));
 const p = __importStar(require("vscode-languageserver-protocol"));
-const m = __importStar(require("vscode-jsonrpc/lib/common/messages"));
+const m = __importStar(require("vscode-jsonrpc/lib/messages"));
 const v = __importStar(require("vscode-languageserver"));
 const rpc = __importStar(require("vscode-jsonrpc"));
 const path = __importStar(require("path"));
