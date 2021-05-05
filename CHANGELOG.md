@@ -2,6 +2,8 @@
 
 ## master
 
+## 2.0.0
+
 **Improvements:**
 
 - Add support for the new `rescript` npm package. This version will handle both, `bs-platform` and `rescript` projects.
