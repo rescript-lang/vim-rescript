@@ -34,11 +34,19 @@ This plugin provides important features to work on ReScript projects, such as:
 - Autocompletion (via omnicomplete)
 
 Compatibility:
-This plugin is guaranteed to work with `bs-platform@8.3` and above and comes
-with all the required executables.
+This plugin is guaranteed to work with `bs-platform@8.3` & `rescript@9.1.1` and
+above and comes with all the required executables.
 
 Please make sure to install your project dependencies. The plugin will look
 for the nearest node_modules folder to get access to the ReScript toolchain.
+
+Legacy Mode:
+The plugin switches into "legacy mode" whenever it detects a project that is
+based on the `bs-platform` npm package. This mode ensures compatibility for
+older codebases that didn't migrate to our `rescript` npm package yet.
+
+When in legacy mode, the plugin uses g:rescript_bsb_exe and g:rescript_bsc_exe
+instead of g:rescript_exe.
 
 ===============================================================================
 CONFIG                                                      *rescript-config*
@@ -66,29 +74,30 @@ triggered with `C-x C-o` in insert mode to look for autocomplete candidates.
 While omnicomplete's dialog is open, use `C-n` / `C-p` to navigate to the next
 / previous item
 
-Put the following settings in your vimrc to activate omnicompletion:
+Put the following settings in your vimrc to activate omnicompletion: >
   " Hooking up the ReScript autocomplete function
   set omnifunc=rescript#Complete
 
   " When preview is enabled, omnicomplete will display additional
   " information for a selected item
   set completeopt+=preview
+<
 
 ===============================================================================
 COC-CONFIG						    *rescript-coc*
 
 In case you want to use ReScript with |coc-nvim|, open your config file with
-|:CocConfig| and add following settings:
-
-"languageserver": {
-  "rescript": {
-    "enable": true,
-    "module": "~/.config/nvim/plugged/vim-rescript/rescript-vscode/extension/server/out/server.js",
-    "args": ["--node-ipc"],
-    "filetypes": ["rescript"],
-    "rootPatterns": ["bsconfig.json"]
+|:CocConfig| and add following settings: >
+  "languageserver": {
+    "rescript": {
+      "enable": true,
+      "module": "~/.config/nvim/plugged/vim-rescript/server/out/server.js",
+      "args": ["--node-ipc"],
+      "filetypes": ["rescript"],
+      "rootPatterns": ["bsconfig.json"]
+    }
   }
-}
+<
 
 The config above assumes that you are using vim-plug. Adapt your `module` path
 according to the install location of your vim-rescript plugin.
@@ -99,10 +108,16 @@ and check your code for type-hints.
 ===============================================================================
 VARIABLES                                                  *rescript-variables*
 
-g:rescript_editor_support_exe		string       *g:rescript_editor_support_exe*
+g:rescript_analysis_exe		         string       *g:rescript_analysis_exe*
 
     Path to ReScript's editor-support executable. This is mainly used for
     plugin development purposes. Don't abuse this config.
+
+g:rescript_exe				string		*g:rescript_exe*
+
+    Path to the universal `rescript.exe` command shipped with the `rescript`
+    npm package. Will be determined on every `:RescriptBuild`,
+    `:RescriptClean`, ... call.
 
 ===============================================================================
 COMMANDS                                                    *rescript-commands*
@@ -118,24 +133,25 @@ COMMANDS                                                    *rescript-commands*
     after writing your new .res file, otherwise the compiler will not compile.
 
 *:RescriptBuild*
-    Builds your current project with g:rescript_build_exe (without -make-world
-    flag)
+    Builds your current project and also its dependencies. In legacy mode, it
+    will only build the local dependencies (use |:RescriptBuildWithDeps| if you
+    want to build dependencies as well).
 
-*:RescriptBuildWorld*
-    Builds your current project with g:rescript_build_exe (with -make-world).
-    This is useful for building your ReScript dependencies as well.
+*:RescriptBuildWithDeps*
+    Builds your current project with all its dependencies. Only useful in
+    legacy mode.
 
-*:RescriptCleanWorld*
+*:RescriptCleanWithDeps*
     Cleans all project files + all ReScript dependencies. This is useful for
-    fixing stale caches (e.g. when upgrading ReScript versions). 
+    fixing stale caches (e.g. when upgrading ReScript versions).
 
 *:RescriptTypeHint*
-    Uses the g:rescript_editor_support_exe executable to extract
+    Uses the g:rescript_analysis_exe executable to extract
     type information of the current file and displays the right type hint for
     the current cursor position
 
 *:RescriptJumpToDefinition*
-    Uses the g:rescript_editor_support_exe executable to jump to the
+    Uses the g:rescript_analysis_exe executable to jump to the
     original definition of the entity on the current position
 
 *:RescriptInfo*

@@ -2,6 +2,34 @@
 
 ## master
 
+**Improvements:**
+
+- Add support for the new `rescript` npm package. This version will handle both, `bs-platform` and `rescript` projects.
+  - Tip: Running `:RescriptInfo` will show you if the plugin is running in `legacy` (`bsc.exe` / `bsb.exe`) or `modern` (`rescript.exe`) mode
+- Updated vendored rescript-vscode server to `1.1.1` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#110))
+
+**Breaking Changes:**
+
+We slimmed down our vendored LSP code and changed the binary paths. Within your `CocConfig`, change your server path accordingly:
+
+```diff
+"languageserver": {
+  "rescript": {
+    "enable": true,
+-   "module": "~/.config/nvim/plugged/vim-rescript/rescript-vscode/extension/server/out/server.js",
++   "module": "~/.config/nvim/plugged/vim-rescript/server/out/server.js",
+    "args": ["--node-ipc"],
+    "filetypes": ["rescript"],
+    "rootPatterns": ["bsconfig.json"]
+  }
+}
+```
+
+We also renamed the following plugin commands:
+
+- `:RescriptBuildWorld` to `:RescriptBuildWithDeps`
+- `:RescriptCleanWorld` to `:RescriptBuildWithDeps`
+
 ## 1.4.0
 
 **Improvements:**

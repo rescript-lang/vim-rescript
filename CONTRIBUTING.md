@@ -68,16 +68,16 @@ We are currently vendoring rescript-vscode to provide all the binaries + LSP for
 First, `curl` the tagged zip bundle from the `rescript-vscode` GH releases:
 
 ```
-curl -L https://github.com/rescript-lang/rescript-vscode/releases/download/1.0.0/rescript-vscode-1.0.0.vsix -o rescript-vscode-1.0.0.zip
+curl -L https://github.com/rescript-lang/rescript-vscode/releases/download/1.1.1/rescript-vscode-1.1.1.vsix -o rescript-vscode-1.1.1.zip
 ```
 
 Unzip it and replace the `rescript-vscode` directory. Like this:
 
 ```
-unzip rescript-vscode-1.0.0.zip -d rescript-vscode-1.0.0
-rm -rf rescript-vscode
+unzip rescript-vscode-1.1.1.zip -d rescript-vscode-1.1.1
+rm -rf server
 
-mv rescript-vscode-1.0.0 rescript-vscode
+mv rescript-vscode-1.1.1/extension/server server
 ```
 
 Lastly:

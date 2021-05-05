@@ -26,15 +26,24 @@ endfunction
 " bs-platform setups
 function! rescript#UpdateProjectEnv()
   " Looks for the nearest node_modules directory
-  let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . s:rescript_arch
+  let l:res_bin_dir = finddir('node_modules/rescript/', ".;") . s:rescript_arch
 
-  "if !exists("g:rescript_compile_exe")
-  let g:rescript_compile_exe = getcwd() . "/" . l:res_bin_dir . "/bsc.exe"
-  "endif
+  " If 1, we are running with the old bsb / bsc binaries
+  let g:rescript_legacy_mode = 0
 
-  "if !exists("g:rescript_build_exe")
-  let g:rescript_build_exe = getcwd() . "/" . l:res_bin_dir . "/bsb.exe"
-  "endif
+  if l:res_bin_dir == s:rescript_arch
+    " look for bs-platform if rescript node module not found
+    let l:res_bin_dir = finddir('node_modules/bs-platform/', ".;") . s:rescript_arch
+    let g:rescript_legacy_mode = 1
+  else
+    " Here we are handling a project that is based on the rescript npm package
+    " This package only uses a rescript.exe, no bsc, nor bsb
+    let g:rescript_exe = getcwd() . "/" . l:res_bin_dir . "/rescript.exe"
+  endif
+
+  " These variables are only used in legacy mode (bs-platform based projects)
+  let g:rescript_bsc_exe = getcwd() . "/" . l:res_bin_dir . "/bsc.exe"
+  let g:rescript_bsb_exe = getcwd() . "/" . l:res_bin_dir . "/bsb.exe"
 
   " Note that this doesn't find bsconfig when the editor was started without a
   " specific file within the project
@@ -66,8 +75,8 @@ function! rescript#Init()
   let s:got_format_err = 0
   let s:got_build_err = 0
 
-  if !exists("g:rescript_editor_support_exe")
-    let g:rescript_editor_support_exe = s:rescript_plugin_dir . "/rescript-vscode/extension/server/" . s:rescript_arch . "/rescript-editor-support.exe"
+  if !exists("g:rescript_analysis_exe")
+    let g:rescript_analysis_exe = s:rescript_plugin_dir . "/server/analysis_binaries/" . s:rescript_arch . "-run.exe"
   endif
 
   call rescript#UpdateProjectEnv()
@@ -77,8 +86,8 @@ function! s:DeleteLines(start, end) abort
     silent! execute a:start . ',' . a:end . 'delete _'
 endfunction
 
-function! rescript#GetRescriptVscodeVersion()
-  let l:out = readfile(s:rescript_plugin_dir . "/rescript-vscode/extension/package.json")
+function! rescript#GetRescriptServerVersion()
+  let l:out = readfile(s:rescript_plugin_dir . "/server/package.json")
 
   try
     let l:json = json_decode(l:out)
@@ -89,24 +98,25 @@ function! rescript#GetRescriptVscodeVersion()
   endtry
 endfunction
 
+" Retrieves the package.json version of either rescript or bs-platform
 function! rescript#DetectVersion()
   call rescript#UpdateProjectEnv()
-  let l:command = g:rescript_compile_exe . " -version"
 
-  exe "lcd " . g:rescript_project_root
-  silent let l:output = system(l:command)
-  exe "lcd -"
-
-  let l:version_list = matchlist(l:output, '.* \([0-9]\+\.[0-9]\+\.[0-9]\+.*\) (.*')
-
-  if len(l:version_list) < 2
-    let s:rescript_version = "0"
+  if g:rescript_legacy_mode ==? 1
+    let l:pkg_json = fnamemodify(g:rescript_bsc_exe, ":h") . "/../package.json"
   else
-    let s:rescript_version = l:version_list[1]
+    let l:pkg_json = fnamemodify(g:rescript_exe, ":h") . "/../package.json"
   endif
 
-  
-  return s:rescript_version
+  let l:out = readfile(l:pkg_json)
+
+  try
+    let l:json = json_decode(l:out)
+    return l:json.version
+  catch /.*/
+    echo "Could not read rescript version"
+    return "?"
+  endtry
 endfunction
 
 function! rescript#Format()
@@ -134,7 +144,7 @@ function! rescript#Format()
   call writefile(getline(1, '$'), l:tmpname)
 
   " bsc -format myFile.res > tempfile
-  let l:command = g:rescript_compile_exe . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
+  let l:command = g:rescript_bsc_exe . " -color never -format " . l:tmpname . " 2> " . l:stderr_tmpname
 
   exe "lcd " . g:rescript_project_root
   silent let l:out = systemlist(l:command) 
@@ -192,7 +202,10 @@ function! rescript#TypeHint()
     write
   endif
 
-  let l:command = g:rescript_editor_support_exe . " dump " . @%
+  let c_line = line(".")
+  let c_col = col(".")  
+
+  let l:command = g:rescript_analysis_exe . " hover " . @% . " " . (c_line - 1) . " " . (c_col - 1)
 
   let out = system(l:command)
 
@@ -205,57 +218,37 @@ function! rescript#TypeHint()
   try
     let l:json = json_decode(out)
   catch /.*/
-    echo "No type info due to build error"
+    echo "No type info (couldn't decode analysis result)"
     return
   endtry
 
-  let c_line = line(".")
-  let c_col = col(".")  
+  let l:match = l:json
 
-  for item in l:json
-    let start_line = item.range.start.line + 1
-    let end_line = item.range.end.line + 1
-    let start_col = item.range.start.character + 1
-    let end_col = item.range.end.character
+  if get(l:match, "contents", "") != ""
+    let md_content = l:match.contents
 
-    if c_line >= start_line && c_line <= end_line
-      if c_col >= start_col && c_col <= end_col
-        let l:match = item
-        break
-      endif
-    endif
-  endfor
+    let text = split(md_content, "\n")
+    let lines = extend(["Pos (l:c): " . c_line . ":" . c_col], text)
 
-  if exists("l:match")
-    " In case our hover involves a reference, resolve that first
-    let l:matches = matchlist(get(l:match, "hover", ""), '#\(\d\+\)')
-    if len(l:matches) > 0
-      let l:index = l:matches[1]
-      let l:match = get(l:json, l:index)
-    endif
+    call s:ShowInPreview("type-preview", "markdown", lines)
 
-    if get(l:match, "hover", "") != ""
-      let md_content = l:match.hover
+    "TODO: Add back the highlighting at some point
+    "----
+    " calculate pos for matchadd
+    "let start_line = item.range.start.line + 1
+    "
+    "let end_line = item.range.end.line + 1
+    "let start_col = item.range.start.character + 1
+    "let end_col = item.range.end.character
 
-      let text = split(md_content, "\n")
-      let lines = extend(["Pos (l:c): " . c_line . ":" . c_col], text)
+    "let startPos = [start_line, start_col, end_col - start_col]
+    "let endPos = [end_line, end_col]
 
-      call s:ShowInPreview("type-preview", "markdown", lines)
+    "let pos = [startPos, endPos]
 
-      " calculate pos for matchadd
-      let start_line = item.range.start.line + 1
-      let end_line = item.range.end.line + 1
-      let start_col = item.range.start.character + 1
-      let end_col = item.range.end.character
-
-      let startPos = [start_line, start_col, end_col - start_col]
-      let endPos = [end_line, end_col]
-
-      let pos = [startPos, endPos]
-
-      call rescript#highlight#HighlightWord(pos)
-      return
-    endif
+    "call rescript#highlight#HighlightWord(pos)
+    "------
+    return
   endif
   echo "No type info"
 endfunction
@@ -269,12 +262,15 @@ function! rescript#JumpToDefinition()
     write
   endif
 
-  let l:command = g:rescript_editor_support_exe . " dump " . @%
+  let c_line = line(".")
+  let c_col = col(".")  
+
+  let l:command = g:rescript_analysis_exe . " definition " . @% . " " . (c_line - 1) . " " . (c_col - 1)
 
   let out = system(l:command)
 
   if v:shell_error != 0
-    echohl Error | echomsg "Type Info failed with exit code '" . v:shell_error . "'" | echohl None
+    echohl Error | echomsg "Analysis binary failed with exit code '" . v:shell_error . "'" | echohl None
     return
   endif
 
@@ -282,52 +278,37 @@ function! rescript#JumpToDefinition()
   try
     let l:json = json_decode(out)
   catch /.*/
-    echo "No type info due to build error"
+    echo "No definition available (couldn't decode analysis result)"
     return
   endtry
 
   let c_line = line(".")
   let c_col = col(".")
 
-  for item in l:json
-    let start_line = item.range.start.line + 1
-    let end_line = item.range.end.line + 1
-    let start_col = item.range.start.character + 1
-    let end_col = item.range.end.character
+  " Prevents errors when v:null was returned
+  if type(l:json) == v:t_dict 
+    let l:def = l:json
 
-    if c_line >= start_line && c_line <= end_line
-      if c_col >= start_col && c_col <= end_col
-        let l:match = item
-        break
-      endif
+    if has_key(l:def, "uri")
+      execute ":e " . l:def.uri
     endif
-  endfor
 
-  if exists("l:match")
-    if has_key(l:match, "definition")
-      let l:def = l:match.definition
+    let start_line = l:def.range.start.line + 1
+    let start_col = l:def.range.start.character + 1
+    let end_line = l:def.range.end.line + 1
+    let end_col = l:def.range.end.character
+    call cursor(start_line, start_col)
 
-      if has_key(l:def, "uri")
-        execute ":e " . l:def.uri
-      endif
+    let startPos = [start_line, start_col, end_col - start_col]
+    let endPos = [end_line, end_col]
+    let pos = [startPos, endPos]
 
-      let start_line = l:def.range.start.line + 1
-      let start_col = l:def.range.start.character + 1
-      let end_line = l:def.range.end.line + 1
-      let end_col = l:def.range.end.character
-      call cursor(start_line, start_col)
-
-      let startPos = [start_line, start_col, end_col - start_col]
-      let endPos = [end_line, end_col]
-      let pos = [startPos, endPos]
-
-      " If pos doesn't point to start: 0,0 and end: 0,0
-      if pos != [[1, 1, -1], [1, 0]]
-        call rescript#highlight#HighlightWord(pos)
-      endif
-
-      return
+    " If pos doesn't point to start: 0,0 and end: 0,0
+    if pos != [[1, 1, -1], [1, 0]]
+      call rescript#highlight#HighlightWord(pos)
     endif
+
+    return
   endif
   echo "No definition found"
 endfunction
@@ -362,7 +343,7 @@ function! rescript#Complete(findstart, base)
   let l:tmpname = tempname() . "." . l:ext
   call writefile(getline(1, '$'), l:tmpname)
 
-  let l:command = g:rescript_editor_support_exe . " complete " . @% . ":" . ( c_line - 1) . ":" . (c_col - 1) . " " . l:tmpname
+  let l:command = g:rescript_analysis_exe . " complete " . @% . " " . ( c_line - 1) . " " . (c_col - 1) . " " . l:tmpname
 
   let out = system(l:command)
 
@@ -394,12 +375,60 @@ function! rescript#Complete(findstart, base)
   return l:ret
 endfunction
 
-function! rescript#BuildProject(...)
+" with_deps: bool ... if 1, clean deps as well
+function! rescript#Clean(...)
+  let l:with_deps = get(a:, 0, 0)
+
+  if g:rescript_legacy_mode ==? 1
+    if l:with_deps ==? 1
+      " bsb -clean-world
+      let l:cmd = g:rescript_bsb_exe . " -clean-world"
+    else
+      " bsb -clean
+      let l:cmd = g:rescript_bsb_exe . " -clean"
+    endif
+  else
+    if l:with_deps ==? 1
+      " rescript clean -with-deps
+      let l:cmd = g:rescript_exe . " clean -with-deps"
+    else
+      " rescript clean
+      let l:cmd = g:rescript_exe . " clean"
+    endif
+  endif
+
+  exe "lcd " . g:rescript_project_root
+  let out = system(l:cmd)
+  exe "lcd -"
+
+  if v:shell_error ==? 0
+    echo "Cleaning successful"
+  else
+    echo out
+  endif
+
+  return v:shell_error
+endfunction
+
+" with_deps: bool ... if 1, clean deps as well
+function! rescript#Build(...)
+  let with_deps = get(a:, 0, 0)
+
   call rescript#UpdateProjectEnv()
 
-  let l:cmd = g:rescript_build_exe
-  if a:0 ==? 1
-    let l:cmd = g:rescript_build_exe . " " . a:1
+  " If in legacy mode, run bsb
+  if g:rescript_legacy_mode ==? 1
+    let l:cmd = g:rescript_bsb_exe
+    if l:with_deps ==? 1
+      " bsb -make-world
+      let l:cmd = g:rescript_bsb_exe . " -make-world"
+    endif
+  else
+    " Otherwise we are in modern mode and use rescript.exe
+    let l:cmd = g:rescript_exe
+    if l:with_deps ==? 1
+      let l:cmd = g:rescript_exe . " -with-deps"
+    endif
   endif
 
   exe "lcd " . g:rescript_project_root
@@ -482,7 +511,7 @@ function! rescript#ReasonToRescript()
     echo "Current buffer is not a .re / .rei file... Do nothing."
     return
   endif
-  let l:command = g:rescript_compile_exe . " -format " . @%
+  let l:command = g:rescript_bsc_exe . " -format " . @%
 
   silent let l:out = systemlist(l:command)
   if v:shell_error ==? 0
@@ -503,10 +532,23 @@ function! rescript#Info()
   let l:version = "ReScript version: " . rescript#DetectVersion()
 
   echo l:version
+
+  if g:rescript_legacy_mode ==? 1
+    echo "Editor mode: legacy (using bsc / bsb instead of rescript)"
+  else
+    echo "Editor mode: modern (using rescript.exe instead of bsc / bsb)"
+  endif
+
   echo "Detected Config File: " . g:rescript_project_config
   echo "Detected Project Root: " . g:rescript_project_root
-  echo "Detected rescript_editor_support_exe: " . g:rescript_editor_support_exe
-  echo "Detected rescript_compile_exe: " . g:rescript_compile_exe
-  echo "Detected rescript_build_exe: " . g:rescript_build_exe
-  echo "Bundled rescript-vscode extension: " . rescript#GetRescriptVscodeVersion()
+  echo "Detected rescript_analysis_exe: " . g:rescript_analysis_exe
+
+  if g:rescript_legacy_mode ==? 1
+    echo "Detected rescript_bsc_exe: " . g:rescript_bsc_exe
+    echo "Detected rescript_bsb_exe: " . g:rescript_bsb_exe
+  else
+    echo "Detected rescript_exe: " . g:rescript_exe
+  endif
+
+  echo "Bundled rescript server version: " . rescript#GetRescriptServerVersion()
 endfunction
