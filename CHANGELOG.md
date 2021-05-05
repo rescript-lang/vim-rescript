@@ -6,7 +6,7 @@
 
 - Add support for the new `rescript` npm package. This version will handle both, `bs-platform` and `rescript` projects.
   - Tip: Running `:RescriptInfo` will show you if the plugin is running in `legacy` (`bsc.exe` / `bsb.exe`) or `modern` (`rescript.exe`) mode
-- Updated vendored rescript-vscode to `1.1.0` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#110))
+- Updated vendored rescript-vscode server to `1.1.1` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#110))
 
 **Breaking Changes:**
 
