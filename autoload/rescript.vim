@@ -76,7 +76,7 @@ function! rescript#Init()
   let s:got_build_err = 0
 
   if !exists("g:rescript_analysis_exe")
-    let g:rescript_analysis_exe = s:rescript_plugin_dir . "/server/analysis_binaries/" . s:rescript_arch . "-run.exe"
+    let g:rescript_analysis_exe = s:rescript_plugin_dir . "/server/analysis_binaries/" . s:rescript_arch . "/rescript-editor-analysis.exe"
   endif
 
   call rescript#UpdateProjectEnv()
