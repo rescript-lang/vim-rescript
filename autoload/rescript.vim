@@ -76,7 +76,7 @@ function! rescript#Init()
   let s:got_build_err = 0
 
   if !exists("g:rescript_analysis_exe")
-    let g:rescript_analysis_exe = s:rescript_plugin_dir . "/server/analysis_binaries/" . s:rescript_arch . "-run.exe"
+    let g:rescript_analysis_exe = s:rescript_plugin_dir . "/server/analysis_binaries/" . s:rescript_arch . "/rescript-editor-analysis.exe"
   endif
 
   call rescript#UpdateProjectEnv()
@@ -427,7 +427,7 @@ function! rescript#Build(...)
     " Otherwise we are in modern mode and use rescript.exe
     let l:cmd = g:rescript_exe
     if l:with_deps ==? 1
-      let l:cmd = g:rescript_exe . " -with-deps"
+      let l:cmd = g:rescript_exe . " build -with-deps"
     endif
   endif
 
@@ -511,6 +511,7 @@ function! rescript#ReasonToRescript()
     echo "Current buffer is not a .re / .rei file... Do nothing."
     return
   endif
+
   let l:command = g:rescript_bsc_exe . " -format " . @%
 
   silent let l:out = systemlist(l:command)
@@ -548,6 +549,7 @@ function! rescript#Info()
     echo "Detected rescript_bsb_exe: " . g:rescript_bsb_exe
   else
     echo "Detected rescript_exe: " . g:rescript_exe
+    echo "Detected (legacy) rescript_bsc_exe: " . g:rescript_bsc_exe
   endif
 
   echo "Bundled rescript server version: " . rescript#GetRescriptServerVersion()

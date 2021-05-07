@@ -38,8 +38,8 @@ function! InitTest()
     let l:platform = "linux"
   endif
 
-  call assert_equal(getcwd() . "/node_modules/bs-platform/" . l:platform . "/bsc.exe", g:rescript_compile_exe)
-  call assert_equal(getcwd() . "/node_modules/bs-platform/" . l:platform . "/bsb.exe", g:rescript_build_exe)
+  call assert_equal(getcwd() . "/node_modules/bs-platform/" . l:platform . "/bsc.exe", g:rescript_bsc_exe)
+  call assert_equal(getcwd() . "/node_modules/bs-platform/" . l:platform . "/bsb.exe", g:rescript_bsb_exe)
 endfunction
 
 function FormatErrorTest(fixtureName,...)

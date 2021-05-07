@@ -30,14 +30,18 @@ node_modules
 test/**/*.js
 doc/tags
 
+server/**/*.d.ts
+server/**/*.js.map
+server/node_modules/.bin
+
 # We don't need that file
 server/analysis_binaries/README.md
 
 # We need to vendor node_modules and all the executables
-!server/node_modules/
-!server/analysis_binaries/darwin-run.exe
-!server/analysis_binaries/linux-run.exe
-!server/analysis_binaries/win32-run.exe
+!server/**/node_modules/
+!server/analysis_binaries/darwin/rescript-editor-analysis.exe
+!server/analysis_binaries/linux/rescript-editor-analysis.exe
+!server/analysis_binaries/win32/rescript-editor-analysis.exe
 
 examples/**/node_modules
 examples/**/lib
