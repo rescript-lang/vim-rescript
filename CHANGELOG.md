@@ -2,6 +2,11 @@
 
 ## master
 
+## 2.0.1
+
+- Fixes an issue where `:RescriptTypeHint`, `:RescriptUpgrade` fail with an 127 exit code (due to missing analysis binaries)
+- Fixes `coc` server crashing issues
+
 ## 2.0.0
 
 **Improvements:**
