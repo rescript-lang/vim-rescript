@@ -87,7 +87,7 @@ syntax region resString start="\v`" end="\v`" contains=resInterpolationVariable
 syntax region resString start="\v[a-z]`" end="\v`" contains=resInterpolationVariable
 
 " Polymorphic variants
-syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
+syntax match resPolyVariant "\v#[A-za-z0-9][A-Za-z0-9_'$]*"
 syntax match resPolyVariant "\v#\".*\""
 syntax match resPolyVariant "\v#\\\".*\""
 
