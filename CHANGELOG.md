@@ -4,6 +4,7 @@
 
 **Improvements:**
 - Add syntax support for int polyvariants
+- Updated vendored rescript-vscode server to `1.1.2` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#112))
 
 ## 2.0.1
 
