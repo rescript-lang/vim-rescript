@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseCompilerLogOutput = exports.runBuildWatcherUsingValidBuildPath = exports.runAnalysisAfterSanityCheck = exports.formatUsingValidBscNativePath = exports.findNodeBuildOfProjectRoot = exports.findBscNativeOfFile = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
+exports.parseCompilerLogOutput = exports.runBuildWatcherUsingValidBuildPath = exports.createInterfaceFileUsingValidBscExePath = exports.replaceFileExtension = exports.getReferencesForPosition = exports.runAnalysisCommand = exports.runAnalysisAfterSanityCheck = exports.formatUsingValidBscNativePath = exports.findNodeBuildOfProjectRoot = exports.findBscNativeOfFile = exports.findProjectRootOfFile = exports.createFileInTempDir = void 0;
 const c = __importStar(require("./constants"));
 const childProcess = __importStar(require("child_process"));
 const path = __importStar(require("path"));
@@ -150,6 +150,50 @@ let runAnalysisAfterSanityCheck = (filePath, args) => {
     return JSON.parse(stdout.toString());
 };
 exports.runAnalysisAfterSanityCheck = runAnalysisAfterSanityCheck;
+let runAnalysisCommand = (filePath, args, msg) => {
+    let result = exports.runAnalysisAfterSanityCheck(filePath, args);
+    let response = {
+        jsonrpc: c.jsonrpcVersion,
+        id: msg.id,
+        result,
+    };
+    return response;
+};
+exports.runAnalysisCommand = runAnalysisCommand;
+let getReferencesForPosition = (filePath, position) => exports.runAnalysisAfterSanityCheck(filePath, [
+    "references",
+    filePath,
+    position.line,
+    position.character,
+]);
+exports.getReferencesForPosition = getReferencesForPosition;
+let replaceFileExtension = (filePath, ext) => {
+    let name = path.basename(filePath, path.extname(filePath));
+    return path.format({ dir: path.dirname(filePath), name, ext });
+};
+exports.replaceFileExtension = replaceFileExtension;
+let createInterfaceFileUsingValidBscExePath = (filePath, cmiPath, bscExePath) => {
+    try {
+        let resiString = childProcess.execFileSync(bscExePath, [
+            "-color",
+            "never",
+            cmiPath,
+        ]);
+        let resiPath = exports.replaceFileExtension(filePath, c.resiExt);
+        fs_1.default.writeFileSync(resiPath, resiString, { encoding: "utf-8" });
+        return {
+            kind: "success",
+            result: "Interface successfully created.",
+        };
+    }
+    catch (e) {
+        return {
+            kind: "error",
+            error: e.message,
+        };
+    }
+};
+exports.createInterfaceFileUsingValidBscExePath = createInterfaceFileUsingValidBscExePath;
 let runBuildWatcherUsingValidBuildPath = (buildPath, isRescript, projectRootPath) => {
     let cwdEnv = {
         cwd: projectRootPath,
@@ -225,8 +269,8 @@ exports.runBuildWatcherUsingValidBuildPath = runBuildWatcherUsingValidBuildPath;
 #Done(1600519680836)
 */
 // parser helpers
-let normalizeFileForWindows = (file) => {
-    return process.platform === "win32" ? `file:\\\\\\${file}` : file;
+let pathToURI = (file) => {
+    return process.platform === "win32" ? `file:\\\\\\${file}` : `file://${file}`;
 };
 let parseFileAndRange = (fileAndRange) => {
     // https://github.com/rescript-lang/rescript-compiler/blob/0a3f4bb32ca81e89cefd5a912b8795878836f883/jscomp/super_errors/super_location.ml#L15-L25
@@ -250,7 +294,7 @@ let parseFileAndRange = (fileAndRange) => {
     if (match === null) {
         // no location! Though LSP insist that we provide at least a dummy location
         return {
-            file: normalizeFileForWindows(trimmedFileAndRange),
+            file: pathToURI(trimmedFileAndRange),
             range: {
                 start: { line: 0, character: 0 },
                 end: { line: 0, character: 0 },
@@ -285,7 +329,7 @@ let parseFileAndRange = (fileAndRange) => {
         };
     }
     return {
-        file: normalizeFileForWindows(file),
+        file: pathToURI(file),
         range,
     };
 };

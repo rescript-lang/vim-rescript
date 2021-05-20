@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startBuildAction = exports.resiExt = exports.resExt = exports.compilerLogPartialPath = exports.bsconfigPartialPath = exports.bsbLock = exports.bsbNodePartialPath = exports.rescriptNodePartialPath = exports.analysisProdPath = exports.analysisDevPath = exports.bscNativePartialPath = exports.bscNativeReScriptPartialPath = exports.jsonrpcVersion = void 0;
+exports.startBuildAction = exports.cmiExt = exports.resiExt = exports.resExt = exports.compilerLogPartialPath = exports.compilerDirPartialPath = exports.bsconfigPartialPath = exports.bsbLock = exports.bsbNodePartialPath = exports.rescriptNodePartialPath = exports.analysisProdPath = exports.analysisDevPath = exports.bscNativePartialPath = exports.bscNativeReScriptPartialPath = exports.jsonrpcVersion = void 0;
 const path = __importStar(require("path"));
 // See https://microsoft.github.io/language-server-protocol/specification Abstract Message
 // version is fixed to 2.0
@@ -33,8 +33,10 @@ exports.rescriptNodePartialPath = path.join("node_modules", ".bin", "rescript");
 exports.bsbNodePartialPath = path.join("node_modules", ".bin", "bsb");
 exports.bsbLock = ".bsb.lock";
 exports.bsconfigPartialPath = "bsconfig.json";
+exports.compilerDirPartialPath = path.join("lib", "bs");
 exports.compilerLogPartialPath = path.join("lib", "bs", ".compiler.log");
 exports.resExt = ".res";
 exports.resiExt = ".resi";
+exports.cmiExt = ".cmi";
 exports.startBuildAction = "Start Build";
 //# sourceMappingURL=constants.js.map

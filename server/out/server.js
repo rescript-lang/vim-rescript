@@ -47,6 +47,7 @@ let projectsFiles = new Map();
 // ^ caching AND states AND distributed system. Why does LSP has to be stupid like this
 // will be properly defined later depending on the mode (stdio/node-rpc)
 let send = (_) => { };
+let createInterfaceRequest = new v.RequestType("rescript-vscode.create_interface");
 let sendUpdatedDiagnostics = () => {
     projectsFiles.forEach(({ filesWithDiagnostics }, projectRootPath) => {
         let content = fs_1.default.readFileSync(path.join(projectRootPath, c.compilerLogPartialPath), { encoding: "utf-8" });
@@ -216,6 +217,240 @@ else {
     send = (msg) => process_1.default.send(msg);
     process_1.default.on("message", onMessage);
 }
+function hover(msg) {
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let response = utils.runAnalysisCommand(filePath, ["hover", filePath, params.position.line, params.position.character], msg);
+    return response;
+}
+function definition(msg) {
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let response = utils.runAnalysisCommand(filePath, ["definition", filePath, params.position.line, params.position.character], msg);
+    return response;
+}
+function references(msg) {
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_references
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let result = utils.getReferencesForPosition(filePath, params.position);
+    let response = {
+        jsonrpc: c.jsonrpcVersion,
+        id: msg.id,
+        result,
+        // error: code and message set in case an exception happens during the definition request.
+    };
+    return response;
+}
+function rename(msg) {
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_rename
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let locations = utils.getReferencesForPosition(filePath, params.position);
+    let result;
+    if (locations === null) {
+        result = null;
+    }
+    else {
+        let changes = {};
+        locations.forEach(({ uri, range }) => {
+            let textEdit = { range, newText: params.newName };
+            if (uri in changes) {
+                changes[uri].push(textEdit);
+            }
+            else {
+                changes[uri] = [textEdit];
+            }
+        });
+        result = { changes };
+    }
+    let response = {
+        jsonrpc: c.jsonrpcVersion,
+        id: msg.id,
+        result,
+    };
+    return response;
+}
+function documentSymbol(msg) {
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_documentSymbol
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let response = utils.runAnalysisCommand(filePath, ["documentSymbol", filePath], msg);
+    return response;
+}
+function completion(msg) {
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let code = getOpenedFileContent(params.textDocument.uri);
+    let tmpname = utils.createFileInTempDir();
+    fs_1.default.writeFileSync(tmpname, code, { encoding: "utf-8" });
+    let response = utils.runAnalysisCommand(filePath, [
+        "completion",
+        filePath,
+        params.position.line,
+        params.position.character,
+        tmpname,
+    ], msg);
+    fs_1.default.unlink(tmpname, () => null);
+    return response;
+}
+function format(msg) {
+    // technically, a formatting failure should reply with the error. Sadly
+    // the LSP alert box for these error replies sucks (e.g. doesn't actually
+    // display the message). In order to signal the client to display a proper
+    // alert box (sometime with actionable buttons), we need to first send
+    // back a fake success message (because each request mandates a
+    // response), then right away send a server notification to display a
+    // nicer alert. Ugh.
+    let fakeSuccessResponse = {
+        jsonrpc: c.jsonrpcVersion,
+        id: msg.id,
+        result: [],
+    };
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let extension = path.extname(params.textDocument.uri);
+    if (extension !== c.resExt && extension !== c.resiExt) {
+        let params = {
+            type: p.MessageType.Error,
+            message: `Not a ${c.resExt} or ${c.resiExt} file. Cannot format it.`,
+        };
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            method: "window/showMessage",
+            params: params,
+        };
+        return [fakeSuccessResponse, response];
+    }
+    else {
+        // See comment on findBscNativeDirOfFile for why we need
+        // to recursively search for bsc.exe upward
+        let bscNativePath = utils.findBscNativeOfFile(filePath);
+        if (bscNativePath === null) {
+            let params = {
+                type: p.MessageType.Error,
+                message: `Cannot find a nearby bsc.exe in rescript or bs-platform. It's needed for formatting.`,
+            };
+            let response = {
+                jsonrpc: c.jsonrpcVersion,
+                method: "window/showMessage",
+                params: params,
+            };
+            return [fakeSuccessResponse, response];
+        }
+        else {
+            // code will always be defined here, even though technically it can be undefined
+            let code = getOpenedFileContent(params.textDocument.uri);
+            let formattedResult = utils.formatUsingValidBscNativePath(code, bscNativePath, extension === c.resiExt);
+            if (formattedResult.kind === "success") {
+                let max = formattedResult.result.length;
+                let result = [
+                    {
+                        range: {
+                            start: { line: 0, character: 0 },
+                            end: { line: max, character: max },
+                        },
+                        newText: formattedResult.result,
+                    },
+                ];
+                let response = {
+                    jsonrpc: c.jsonrpcVersion,
+                    id: msg.id,
+                    result: result,
+                };
+                return [response];
+            }
+            else {
+                // let the diagnostics logic display the updated syntax errors,
+                // from the build.
+                // Again, not sending the actual errors. See fakeSuccessResponse
+                // above for explanation
+                return [fakeSuccessResponse];
+            }
+        }
+    }
+}
+function createInterface(msg) {
+    let params = msg.params;
+    let extension = path.extname(params.uri);
+    let filePath = url_1.fileURLToPath(params.uri);
+    let bscNativePath = utils.findBscNativeOfFile(filePath);
+    let projDir = utils.findProjectRootOfFile(filePath);
+    let code = getOpenedFileContent(params.uri);
+    let isReactComponent = code.includes("@react.component");
+    if (bscNativePath === null || projDir === null) {
+        let params = {
+            type: p.MessageType.Error,
+            message: `Cannot find a nearby bsc.exe to generate the interface file.`,
+        };
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            method: "window/showMessage",
+            params: params,
+        };
+        return response;
+    }
+    if (extension !== c.resExt) {
+        let params = {
+            type: p.MessageType.Error,
+            message: `Not a ${c.resExt} file. Cannot create an interface for it.`,
+        };
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            method: "window/showMessage",
+            params: params,
+        };
+        return response;
+    }
+    if (isReactComponent) {
+        let params = {
+            type: p.MessageType.Error,
+            message: `Creating an interface with @react.component is not currently supported.`,
+        };
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            method: "window/showMessage",
+            params: params,
+        };
+        return response;
+    }
+    let cmiPartialPath = utils.replaceFileExtension(filePath.split(projDir)[1], c.cmiExt);
+    let cmiPath = path.join(projDir, c.compilerDirPartialPath, cmiPartialPath);
+    let cmiAvailable = fs_1.default.existsSync(cmiPath);
+    if (!cmiAvailable) {
+        let params = {
+            type: p.MessageType.Error,
+            message: `No compiled interface file found. Please compile your project first.`,
+        };
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            method: "window/showMessage",
+            params,
+        };
+        return response;
+    }
+    let intfResult = utils.createInterfaceFileUsingValidBscExePath(filePath, cmiPath, bscNativePath);
+    if (intfResult.kind === "success") {
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            id: msg.id,
+            result: intfResult.result,
+        };
+        return response;
+    }
+    else {
+        let response = {
+            jsonrpc: c.jsonrpcVersion,
+            id: msg.id,
+            error: {
+                code: m.ErrorCodes.InternalError,
+                message: "Unable to create interface file.",
+            },
+        };
+        return response;
+    }
+}
 function onMessage(msg) {
     if (m.isNotificationMessage(msg)) {
         // notification message, aka the client ends it and doesn't want a reply
@@ -285,6 +520,7 @@ function onMessage(msg) {
                     hoverProvider: true,
                     definitionProvider: true,
                     referencesProvider: true,
+                    renameProvider: true,
                     documentSymbolProvider: false,
                     completionProvider: { triggerCharacters: [".", ">", "@", "~"] },
                 },
@@ -333,172 +569,29 @@ function onMessage(msg) {
             }
         }
         else if (msg.method === p.HoverRequest.method) {
-            let params = msg.params;
-            let filePath = url_1.fileURLToPath(params.textDocument.uri);
-            let result = utils.runAnalysisAfterSanityCheck(filePath, [
-                "hover",
-                filePath,
-                params.position.line,
-                params.position.character,
-            ]);
-            let hoverResponse = {
-                jsonrpc: c.jsonrpcVersion,
-                id: msg.id,
-                // type result = Hover | null
-                // type Hover = {contents: MarkedString | MarkedString[] | MarkupContent, range?: Range}
-                result,
-            };
-            send(hoverResponse);
+            send(hover(msg));
         }
         else if (msg.method === p.DefinitionRequest.method) {
-            // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
-            let params = msg.params;
-            let filePath = url_1.fileURLToPath(params.textDocument.uri);
-            let result = utils.runAnalysisAfterSanityCheck(filePath, [
-                "definition",
-                filePath,
-                params.position.line,
-                params.position.character,
-            ]);
-            let definitionResponse = {
-                jsonrpc: c.jsonrpcVersion,
-                id: msg.id,
-                result,
-                // error: code and message set in case an exception happens during the definition request.
-            };
-            send(definitionResponse);
+            send(definition(msg));
         }
         else if (msg.method === p.ReferencesRequest.method) {
-            // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_references
-            let params = msg.params;
-            let filePath = url_1.fileURLToPath(params.textDocument.uri);
-            let result = utils.runAnalysisAfterSanityCheck(filePath, [
-                "references",
-                filePath,
-                params.position.line,
-                params.position.character,
-            ]);
-            let definitionResponse = {
-                jsonrpc: c.jsonrpcVersion,
-                id: msg.id,
-                result,
-                // error: code and message set in case an exception happens during the definition request.
-            };
-            send(definitionResponse);
+            send(references(msg));
+        }
+        else if (msg.method === p.RenameRequest.method) {
+            send(rename(msg));
         }
         else if (msg.method === p.DocumentSymbolRequest.method) {
-            // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_documentSymbol
-            let params = msg.params;
-            let filePath = url_1.fileURLToPath(params.textDocument.uri);
-            let result = utils.runAnalysisAfterSanityCheck(filePath, [
-                "documentSymbol",
-                filePath,
-            ]);
-            let definitionResponse = {
-                jsonrpc: c.jsonrpcVersion,
-                id: msg.id,
-                result,
-            };
-            send(definitionResponse);
+            send(documentSymbol(msg));
         }
         else if (msg.method === p.CompletionRequest.method) {
-            let params = msg.params;
-            let filePath = url_1.fileURLToPath(params.textDocument.uri);
-            let code = getOpenedFileContent(params.textDocument.uri);
-            let tmpname = utils.createFileInTempDir();
-            fs_1.default.writeFileSync(tmpname, code, { encoding: "utf-8" });
-            let result = utils.runAnalysisAfterSanityCheck(filePath, [
-                "completion",
-                filePath,
-                params.position.line,
-                params.position.character,
-                tmpname,
-            ]);
-            fs_1.default.unlink(tmpname, () => null);
-            let completionResponse = {
-                jsonrpc: c.jsonrpcVersion,
-                id: msg.id,
-                result,
-            };
-            send(completionResponse);
+            send(completion(msg));
         }
         else if (msg.method === p.DocumentFormattingRequest.method) {
-            // technically, a formatting failure should reply with the error. Sadly
-            // the LSP alert box for these error replies sucks (e.g. doesn't actually
-            // display the message). In order to signal the client to display a proper
-            // alert box (sometime with actionable buttons), we need to first send
-            // back a fake success message (because each request mandates a
-            // response), then right away send a server notification to display a
-            // nicer alert. Ugh.
-            let fakeSuccessResponse = {
-                jsonrpc: c.jsonrpcVersion,
-                id: msg.id,
-                result: [],
-            };
-            let params = msg.params;
-            let filePath = url_1.fileURLToPath(params.textDocument.uri);
-            let extension = path.extname(params.textDocument.uri);
-            if (extension !== c.resExt && extension !== c.resiExt) {
-                let params = {
-                    type: p.MessageType.Error,
-                    message: `Not a ${c.resExt} or ${c.resiExt} file. Cannot format it.`,
-                };
-                let response = {
-                    jsonrpc: c.jsonrpcVersion,
-                    method: "window/showMessage",
-                    params: params,
-                };
-                send(fakeSuccessResponse);
-                send(response);
-            }
-            else {
-                // See comment on findBscNativeDirOfFile for why we need
-                // to recursively search for bsc.exe upward
-                let bscNativePath = utils.findBscNativeOfFile(filePath);
-                if (bscNativePath === null) {
-                    let params = {
-                        type: p.MessageType.Error,
-                        message: `Cannot find a nearby bsc.exe in rescript or bs-platform. It's needed for formatting.`,
-                    };
-                    let response = {
-                        jsonrpc: c.jsonrpcVersion,
-                        method: "window/showMessage",
-                        params: params,
-                    };
-                    send(fakeSuccessResponse);
-                    send(response);
-                }
-                else {
-                    // code will always be defined here, even though technically it can be undefined
-                    let code = getOpenedFileContent(params.textDocument.uri);
-                    let formattedResult = utils.formatUsingValidBscNativePath(code, bscNativePath, extension === c.resiExt);
-                    if (formattedResult.kind === "success") {
-                        let max = formattedResult.result.length;
-                        let result = [
-                            {
-                                range: {
-                                    start: { line: 0, character: 0 },
-                                    end: { line: max, character: max },
-                                },
-                                newText: formattedResult.result,
-                            },
-                        ];
-                        let response = {
-                            jsonrpc: c.jsonrpcVersion,
-                            id: msg.id,
-                            result: result,
-                        };
-                        send(response);
-                    }
-                    else {
-                        // let the diagnostics logic display the updated syntax errors,
-                        // from the build.
-                        // Again, not sending the actual errors. See fakeSuccessResponse
-                        // above for explanation
-                        send(fakeSuccessResponse);
-                    }
-                }
-            }
+            let responses = format(msg);
+            responses.forEach((response) => send(response));
+        }
+        else if (msg.method === createInterfaceRequest.method) {
+            send(createInterface(msg));
         }
         else {
             let response = {
