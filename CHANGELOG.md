@@ -5,6 +5,8 @@
 **Improvements:**
 - Add syntax support for int polyvariants
 - Updated vendored rescript-vscode server to `1.1.2` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#112))
+  - Rename support for let-binding, types, record labels, module names etc
+  - **Important:** If you are using coc.nvim, make sure to upgrade to the latest `release` version first, otherwise renaming will not work across files!
 
 ## 2.0.1
 
