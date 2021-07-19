@@ -2,6 +2,8 @@
 
 ## master
 
+## 2.1.0
+
 **Improvements:**
 - Add syntax highlighting for int polyvariants
 - Improved syntax highlighting for string interpolation ([#44](https://github.com/rescript-lang/vim-rescript/pull/44))
