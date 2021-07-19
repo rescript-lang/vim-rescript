@@ -8,4 +8,4 @@ let var3 = j`hello $name how you doin?`
 
 let varInvalid = `hello $name how you doin?`
 
-let expr = `2 + 2 is ${Int.toString(2 + 2)}`
+let expr = `2 + 2 is ${Belt.Int.toString(2 + 2)}`
