@@ -3,11 +3,13 @@
 ## master
 
 **Improvements:**
-- Add syntax support for int polyvariants
-- Updated vendored rescript-vscode server to `1.1.2` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#112))
-  - Rename support for let-binding, types, record labels, module names etc
-  - **Important:** If you are using coc.nvim, make sure to upgrade to the latest `release` version first, otherwise renaming will not work across files!
+- Add syntax highlighting for int polyvariants
 - Improved syntax highlighting for string interpolation ([#44](https://github.com/rescript-lang/vim-rescript/pull/44))
+- Updated vendored rescript-vscode server to `1.1.3` (see changes introduced in [1.1.2](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#112) and [1.1.3](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#113))
+  - Rename support for let-binding, types, record labels, module names etc
+  - **Important:** If you are using coc.nvim, make sure to upgrade to coc's latest `release` version first, otherwise renaming will not work across files!
+  - Jump to type definition support
+  - New jump-to-definition behavior when having `.res` and `.resi` files in place
 
 ## 2.0.1
 
