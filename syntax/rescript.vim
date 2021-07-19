@@ -82,9 +82,11 @@ syntax match resUnicodeChar "\v\\u[A-Fa-f0-9]\{4}" contained
 syntax match resEscapedChar "\v\\[\\"'ntbrf]" contained
 syntax region resString start="\v\"" end="\v\"" contains=resEscapedQuote,resEscapedChar,resUnicodeChar
 
+" Interpolation
 syntax match resInterpolationVariable "\v\$[a-z_][A-Za-z0-0_'$]*" contained
-syntax region resString start="\v`" end="\v`" contains=resInterpolationVariable
-syntax region resString start="\v[a-z]`" end="\v`" contains=resInterpolationVariable
+syntax region resInterpolationBlock matchgroup=resInterpolationDelimiters start="\v\$\{" end="\v\}" contained contains=TOP
+syntax region resString start="\v`" end="\v`" contains=resInterpolationBlock
+syntax region resString start="\v[a-z]`" end="\v`" contains=resInterpolationBlock,resInterpolationVariable
 
 " Polymorphic variants
 syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
@@ -109,6 +111,7 @@ highlight default link resModuleChain Macro
 highlight default link resUnicodeChar Character
 highlight default link resEscapedChar Character
 highlight default link resString String
+highlight default link resInterpolationDelimiters Macro
 highlight default link resInterpolationVariable Macro
 highlight default link resAttribute PreProc
 
