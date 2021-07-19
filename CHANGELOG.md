@@ -7,6 +7,7 @@
 - Updated vendored rescript-vscode server to `1.1.2` (see changes [here](https://github.com/rescript-lang/rescript-vscode/blob/master/CHANGELOG.md#112))
   - Rename support for let-binding, types, record labels, module names etc
   - **Important:** If you are using coc.nvim, make sure to upgrade to the latest `release` version first, otherwise renaming will not work across files!
+- Improved syntax highlighting for string interpolation ([#44](https://github.com/rescript-lang/vim-rescript/pull/44))
 
 ## 2.0.1
 
