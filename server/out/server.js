@@ -230,6 +230,13 @@ function definition(msg) {
     let response = utils.runAnalysisCommand(filePath, ["definition", filePath, params.position.line, params.position.character], msg);
     return response;
 }
+function typeDefinition(msg) {
+    // https://microsoft.github.io/language-server-protocol/specification/specification-current/#textDocument_typeDefinition
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let response = utils.runAnalysisCommand(filePath, ["typeDefinition", filePath, params.position.line, params.position.character], msg);
+    return response;
+}
 function references(msg) {
     // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_references
     let params = msg.params;
@@ -243,32 +250,55 @@ function references(msg) {
     };
     return response;
 }
+function prepareRename(msg) {
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_prepareRename
+    let params = msg.params;
+    let filePath = url_1.fileURLToPath(params.textDocument.uri);
+    let locations = utils.getReferencesForPosition(filePath, params.position);
+    let result = null;
+    if (locations !== null) {
+        locations.forEach(loc => {
+            if (path.normalize(url_1.fileURLToPath(loc.uri)) ===
+                path.normalize(url_1.fileURLToPath(params.textDocument.uri))) {
+                let { start, end } = loc.range;
+                let pos = params.position;
+                if (start.character <= pos.character &&
+                    start.line <= pos.line &&
+                    end.character >= pos.character &&
+                    end.line >= pos.line) {
+                    result = loc.range;
+                }
+                ;
+            }
+        });
+    }
+    ;
+    return {
+        jsonrpc: c.jsonrpcVersion,
+        id: msg.id,
+        result
+    };
+}
 function rename(msg) {
     // https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_rename
     let params = msg.params;
     let filePath = url_1.fileURLToPath(params.textDocument.uri);
-    let locations = utils.getReferencesForPosition(filePath, params.position);
-    let result;
-    if (locations === null) {
-        result = null;
+    let documentChanges = utils.runAnalysisAfterSanityCheck(filePath, [
+        "rename",
+        filePath,
+        params.position.line,
+        params.position.character,
+        params.newName
+    ]);
+    let result = null;
+    if (documentChanges !== null) {
+        result = { documentChanges };
     }
-    else {
-        let changes = {};
-        locations.forEach(({ uri, range }) => {
-            let textEdit = { range, newText: params.newName };
-            if (uri in changes) {
-                changes[uri].push(textEdit);
-            }
-            else {
-                changes[uri] = [textEdit];
-            }
-        });
-        result = { changes };
-    }
+    ;
     let response = {
         jsonrpc: c.jsonrpcVersion,
         id: msg.id,
-        result,
+        result
     };
     return response;
 }
@@ -344,7 +374,7 @@ function format(msg) {
             let code = getOpenedFileContent(params.textDocument.uri);
             let formattedResult = utils.formatUsingValidBscNativePath(code, bscNativePath, extension === c.resiExt);
             if (formattedResult.kind === "success") {
-                let max = formattedResult.result.length;
+                let max = code.length;
                 let result = [
                     {
                         range: {
@@ -519,9 +549,11 @@ function onMessage(msg) {
                     documentFormattingProvider: true,
                     hoverProvider: true,
                     definitionProvider: true,
+                    typeDefinitionProvider: true,
                     referencesProvider: true,
-                    renameProvider: true,
-                    documentSymbolProvider: false,
+                    renameProvider: { prepareProvider: true },
+                    // disabled right now until we use the parser to show non-stale symbols per keystroke
+                    // documentSymbolProvider: true,
                     completionProvider: { triggerCharacters: [".", ">", "@", "~"] },
                 },
             };
@@ -574,8 +606,14 @@ function onMessage(msg) {
         else if (msg.method === p.DefinitionRequest.method) {
             send(definition(msg));
         }
+        else if (msg.method === p.TypeDefinitionRequest.method) {
+            send(typeDefinition(msg));
+        }
         else if (msg.method === p.ReferencesRequest.method) {
             send(references(msg));
+        }
+        else if (msg.method === p.PrepareRenameRequest.method) {
+            send(prepareRename(msg));
         }
         else if (msg.method === p.RenameRequest.method) {
             send(rename(msg));
