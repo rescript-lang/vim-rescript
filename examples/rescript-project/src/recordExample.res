@@ -6,12 +6,11 @@ module Role = {
   type t = {roleName: string}
 }
 
-let doSomething = (u: User.t) => {
+let logUser = (u: User.t) => {
   Js.log(u.name)
 }
 
-let other = (r: Role.t) => {
+let logRole = (r: Role.t) => {
   Js.log(r.roleName)
 }
-
 
