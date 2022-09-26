@@ -44,7 +44,7 @@ let extensionClientCapabilities = {};
 // initialized, and the current config is received from the client.
 let extensionConfiguration = {
     allowBuiltInFormatter: false,
-    askToStartBuild: true,
+    askToStartBuild: false,
     inlayHints: {
         enable: false,
         maxLength: 25,
