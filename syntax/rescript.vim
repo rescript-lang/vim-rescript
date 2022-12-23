@@ -14,6 +14,7 @@ syntax keyword resKeyword if else switch when
 syntax keyword resKeyword and as open include module in constraint import export
 syntax keyword resKeyword for to downto while
 syntax keyword resKeyword try catch exception assert
+syntax keyword resKeyword async await
 
 " Types
 syntax keyword resType bool int float char string unit
