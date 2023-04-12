@@ -34,6 +34,7 @@ const path = __importStar(require("path"));
 const fs_1 = __importDefault(require("fs"));
 // TODO: check DidChangeWatchedFilesNotification.
 const vscode_languageserver_protocol_1 = require("vscode-languageserver-protocol");
+const lookup = __importStar(require("./lookup"));
 const utils = __importStar(require("./utils"));
 const c = __importStar(require("./constants"));
 const chokidar = __importStar(require("chokidar"));
@@ -53,7 +54,7 @@ let extensionConfiguration = {
     binaryPath: null,
     platformPath: null,
     signatureHelp: {
-        enable: false,
+        enabled: true,
     },
 };
 // Below here is some state that's not important exactly how long it lives.
@@ -73,13 +74,13 @@ let codeActionsFromDiagnostics = {};
 // will be properly defined later depending on the mode (stdio/node-rpc)
 let send = (_) => { };
 let findRescriptBinary = (projectRootPath) => extensionConfiguration.binaryPath == null
-    ? utils.findFilePathFromProjectRoot(projectRootPath, path.join(c.nodeModulesBinDir, c.rescriptBinName))
+    ? lookup.findFilePathFromProjectRoot(projectRootPath, path.join(c.nodeModulesBinDir, c.rescriptBinName))
     : utils.findBinary(extensionConfiguration.binaryPath, c.rescriptBinName);
 let findPlatformPath = (projectRootPath) => {
     if (extensionConfiguration.platformPath != null) {
         return extensionConfiguration.platformPath;
     }
-    let rescriptDir = utils.findFilePathFromProjectRoot(projectRootPath, path.join("node_modules", "rescript"));
+    let rescriptDir = lookup.findFilePathFromProjectRoot(projectRootPath, path.join("node_modules", "rescript"));
     if (rescriptDir == null) {
         return null;
     }
@@ -93,8 +94,8 @@ let findPlatformPath = (projectRootPath) => {
     return platformPath;
 };
 let findBscExeBinary = (projectRootPath) => utils.findBinary(findPlatformPath(projectRootPath), c.bscExeName);
-let createInterfaceRequest = new v.RequestType("rescript-vscode.create_interface");
-let openCompiledFileRequest = new v.RequestType("rescript-vscode.open_compiled");
+let createInterfaceRequest = new v.RequestType("textDocument/createInterface");
+let openCompiledFileRequest = new v.RequestType("textDocument/openCompiled");
 let getCurrentCompilerDiagnosticsForFile = (fileUri) => {
     let diagnostics = null;
     projectsFiles.forEach((projectFile, _projectRootPath) => {
@@ -526,6 +527,7 @@ function completion(msg) {
         params.position.line,
         params.position.character,
         tmpname,
+        Boolean(extensionClientCapabilities.supportsSnippetSyntax),
     ], msg);
     fs_1.default.unlink(tmpname, () => null);
     return response;
@@ -730,12 +732,14 @@ function createInterface(msg) {
     let response = utils.runAnalysisCommand(filePath, ["createInterface", filePath, cmiPath], msg);
     let result = typeof response.result === "string" ? response.result : "";
     try {
-        let resiPath = utils.replaceFileExtension(filePath, c.resiExt);
+        let resiPath = lookup.replaceFileExtension(filePath, c.resiExt);
         fs_1.default.writeFileSync(resiPath, result, { encoding: "utf-8" });
         let response = {
             jsonrpc: c.jsonrpcVersion,
             id: msg.id,
-            result: "Interface successfully created.",
+            result: {
+                uri: utils.pathToURI(resiPath),
+            },
         };
         return response;
     }
@@ -784,18 +788,17 @@ function openCompiledFile(msg) {
         };
         return response;
     }
-    let result = {
-        uri: compiledFilePath.result,
-    };
     let response = {
         jsonrpc: c.jsonrpcVersion,
         id: msg.id,
-        result,
+        result: {
+            uri: utils.pathToURI(compiledFilePath.result),
+        },
     };
     return response;
 }
 function onMessage(msg) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _f, _g, _h;
     if (p.Message.isNotification(msg)) {
         // notification message, aka the client ends it and doesn't want a reply
         if (!initialized && msg.method !== "exit") {
@@ -867,6 +870,7 @@ function onMessage(msg) {
             if (extensionClientCapabilitiesFromClient != null) {
                 extensionClientCapabilities = extensionClientCapabilitiesFromClient;
             }
+            extensionClientCapabilities.supportsSnippetSyntax = Boolean((_f = (_d = (_c = initParams.capabilities.textDocument) === null || _c === void 0 ? void 0 : _c.completion) === null || _d === void 0 ? void 0 : _d.completionItem) === null || _f === void 0 ? void 0 : _f.snippetSupport);
             // send the list of features we support
             let result = {
                 // This tells the client: "hey, we support the following operations".
@@ -883,7 +887,9 @@ function onMessage(msg) {
                     codeActionProvider: true,
                     renameProvider: { prepareProvider: true },
                     documentSymbolProvider: true,
-                    completionProvider: { triggerCharacters: [".", ">", "@", "~", '"'] },
+                    completionProvider: {
+                        triggerCharacters: [".", ">", "@", "~", '"', "=", "("],
+                    },
                     semanticTokensProvider: {
                         legend: {
                             tokenTypes: [
@@ -898,17 +904,17 @@ function onMessage(msg) {
                             ],
                             tokenModifiers: [],
                         },
-                        documentSelector: null,
+                        documentSelector: [{ scheme: "file", language: "rescript" }],
                         // TODO: Support range for full, and add delta support
                         full: true,
                     },
-                    inlayHintProvider: (_c = extensionConfiguration.inlayHints) === null || _c === void 0 ? void 0 : _c.enable,
+                    inlayHintProvider: (_g = extensionConfiguration.inlayHints) === null || _g === void 0 ? void 0 : _g.enable,
                     codeLensProvider: extensionConfiguration.codeLens
                         ? {
                             workDoneProgress: false,
                         }
                         : undefined,
-                    signatureHelpProvider: ((_d = extensionConfiguration.signatureHelp) === null || _d === void 0 ? void 0 : _d.enable)
+                    signatureHelpProvider: ((_h = extensionConfiguration.signatureHelp) === null || _h === void 0 ? void 0 : _h.enabled)
                         ? {
                             triggerCharacters: ["("],
                             retriggerCharacters: ["=", ","],

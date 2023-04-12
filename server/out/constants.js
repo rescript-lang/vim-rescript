@@ -25,6 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pullConfigurationInterval = exports.configurationRequestId = exports.bsconfigSuffixDefault = exports.bsconfigModuleDefault = exports.startBuildAction = exports.cmiExt = exports.resiExt = exports.resExt = exports.compilerLogPartialPath = exports.compilerDirPartialPath = exports.bsconfigPartialPath = exports.bsbLock = exports.rescriptNodePartialPath = exports.nodeModulesBinDir = exports.bscBinName = exports.rescriptBinName = exports.analysisProdPath = exports.analysisDevPath = exports.bscNativeReScriptPartialPath = exports.bscExeName = exports.nodeModulesPlatformPath = exports.platformPath = exports.jsonrpcVersion = exports.platformDir = void 0;
 const path = __importStar(require("path"));
+const buildSchema_1 = require("./buildSchema");
 exports.platformDir = process.arch == "arm64" ? process.platform + process.arch : process.platform;
 // See https://microsoft.github.io/language-server-protocol/specification Abstract Message
 // version is fixed to 2.0
@@ -49,7 +50,7 @@ exports.resiExt = ".resi";
 exports.cmiExt = ".cmi";
 exports.startBuildAction = "Start Build";
 // bsconfig defaults according configuration schema (https://rescript-lang.org/docs/manual/latest/build-configuration-schema)
-exports.bsconfigModuleDefault = "commonjs";
+exports.bsconfigModuleDefault = buildSchema_1.ModuleFormat.Commonjs;
 exports.bsconfigSuffixDefault = ".js";
 exports.configurationRequestId = "rescript_configuration_request";
 exports.pullConfigurationInterval = 10000;
