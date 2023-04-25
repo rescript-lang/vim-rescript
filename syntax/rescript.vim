@@ -60,7 +60,7 @@ syntax match resArrowPipe "\v\-\>"
 syntax match resArrowPipe "\v\|\>"
 syntax match resArrowPipe "\v\@\@"
 
-" Builtion fucntions
+" Builtin functions
 syntax match resFunction "list{\@="
 
 " Comment
