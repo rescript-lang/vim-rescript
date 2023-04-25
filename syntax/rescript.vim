@@ -18,7 +18,7 @@ syntax keyword resException try catch exception assert
 syntax keyword resKeyword async await
 
 " Types
-syntax keyword resType bool int float char string unit
+syntax keyword resType bool int float char string unit promise
 syntax keyword resType array option ref exn format
 syntax match resType "list{\@!"
 
