@@ -11,9 +11,10 @@ syntax keyword resBoolean true false
 " Keywords
 syntax keyword resKeyword let rec type external mutable lazy private of with
 syntax keyword resKeyword if else switch when
-syntax keyword resKeyword and as open include module in constraint import export
-syntax keyword resKeyword for to downto while
-syntax keyword resKeyword try catch exception assert
+syntax keyword resKeyword and as module in constraint import export
+syntax keyword resInclude open include
+syntax keyword resRepeat for to downto while
+syntax keyword resException try catch exception assert
 syntax keyword resKeyword async await
 
 " Types
@@ -118,6 +119,9 @@ syn region   resNone transparent matchgroup=resEncl start="\[|" matchgroup=resEn
 
 highlight default link resBoolean Boolean
 highlight default link resKeyword Keyword
+highlight default link resInclude Include
+highlight default link resException Exception
+highlight default link resRepeat Repeat
 highlight default link resType Type
 highlight default link resOperator Operator
 highlight default link resArrowPipe Operator
