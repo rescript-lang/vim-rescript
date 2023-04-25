@@ -46,8 +46,10 @@ syntax match resOperator "\v\>\="
 syntax match resOperator "\v\@"
 
 syntax match resOperator "\v\!"
-syntax match resOperator "\v\|"
 syntax match resOperator "\v\&"
+
+" Delimiter
+syntax match resDelimiter "\v\|"
 
 " Refs
 syntax match resOperator "\v\:\="
@@ -125,6 +127,7 @@ highlight default link resRepeat Repeat
 highlight default link resType Type
 highlight default link resOperator Operator
 highlight default link resArrowPipe Operator
+highlight default link resDelimiter Operator
 highlight default link resSingleLineComment Comment
 highlight default link resMultiLineComment Comment
 highlight default link resTodo TODO
