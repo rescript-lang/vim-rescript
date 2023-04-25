@@ -18,7 +18,8 @@ syntax keyword resKeyword async await
 
 " Types
 syntax keyword resType bool int float char string unit
-syntax keyword resType list array option ref exn format
+syntax keyword resType array option ref exn format
+syntax match resType "list{\@!"
 
 " Operators
 syntax keyword resOperator mod land lor lxor lsl lsr asr
@@ -56,6 +57,9 @@ syntax match resArrowPipe "\v\-\>"
 syntax match resArrowPipe "\v\|\>"
 syntax match resArrowPipe "\v\@\@"
 
+" Builtion fucntions
+syntax match resFunction "list{\@="
+
 " Comment
 syntax region resSingleLineComment start="//" end="$" contains=resTodo,@Spell
 syntax region resMultiLineComment start="/\*\s*" end="\*/" contains=@Spell,resTodo,resMultiLineComment
@@ -76,7 +80,10 @@ syntax match resModuleOrVariant "\v<[A-Z][A-Za-z0-9_'$]*"
 syntax match resModuleChain "\v<[A-Z][A-Za-z0-9_'$]*\."
 
 " Attribute
-syntax match resAttribute "\v\@([a-zA-z][A-Za-z0-9_']*)(\.([a-zA-z])[A-Za-z0-9_']*)*"
+syntax match resAttribute "\v(\@|\@\@)([a-zA-z][A-Za-z0-9_']*)(\.([a-zA-z])[A-Za-z0-9_']*)*"
+
+" Extension
+syntax match resExtension "\v(\%|\%\%)([a-zA-z][A-Za-z0-9_']*)(\.([a-zA-z])[A-Za-z0-9_']*)*"
 
 " String
 syntax match resUnicodeChar "\v\\u[A-Fa-f0-9]\{4}" contained
@@ -96,6 +103,18 @@ syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
 syntax match resPolyVariant "\v#[0-9]+"
 syntax match resPolyVariant "\v#\".*\""
 syntax match resPolyVariant "\v#\\\".*\""
+
+" Errors
+syn match    resBraceErr   "}"
+syn match    resBrackErr   "\]"
+syn match    resParenErr   ")"
+syn match    resArrErr     "|]"
+
+" Enclosing delimiters
+syn region   resNone transparent matchgroup=resEncl start="(" matchgroup=resEncl end=")" contains=ALLBUT,resParenErr
+syn region   resNone transparent matchgroup=resEncl start="{" matchgroup=resEncl end="}"  contains=ALLBUT,resBraceErr
+syn region   resNone transparent matchgroup=resEncl start="\[" matchgroup=resEncl end="\]" contains=ALLBUT,resBrackErr
+syn region   resNone transparent matchgroup=resEncl start="\[|" matchgroup=resEncl end="|\]" contains=ALLBUT,resArrErr
 
 highlight default link resBoolean Boolean
 highlight default link resKeyword Keyword
@@ -118,5 +137,8 @@ highlight default link resString String
 highlight default link resInterpolationDelimiters Macro
 highlight default link resInterpolationVariable Macro
 highlight default link resAttribute PreProc
+highlight default link resExtension PreProc
+highlight default link resEncl Keyword
+highlight default link resFunction Function
 
 let b:current_syntax = "rescript"
