@@ -343,7 +343,7 @@ function! rescript#Complete(findstart, base)
   let l:tmpname = tempname() . "." . l:ext
   call writefile(getline(1, '$'), l:tmpname)
 
-  let l:command = g:rescript_analysis_exe . " complete " . @% . " " . ( c_line - 1) . " " . (c_col - 1) . " " . l:tmpname
+  let l:command = g:rescript_analysis_exe . " completion " . @% . " " . ( c_line - 1) . " " . (c_col - 1) . " " . l:tmpname
 
   let out = system(l:command)
 
