@@ -11,9 +11,9 @@ syntax keyword resBoolean true false
 " Keywords
 syntax keyword resKeyword let rec type external mutable lazy private of with
 syntax keyword resKeyword if else switch when
-syntax keyword resKeyword and as module in constraint import export
+syntax keyword resKeyword and as module constraint import export
 syntax keyword resInclude open include
-syntax keyword resRepeat for to downto while
+syntax keyword resRepeat for to downto while in
 syntax keyword resException try catch exception assert
 syntax keyword resKeyword async await
 
