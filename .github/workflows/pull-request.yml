@@ -20,4 +20,5 @@ jobs:
           nvim --version
           vim --version
           make test
-          make test-syntax
+      - name: Test syntax
+        run: make test-syntax
