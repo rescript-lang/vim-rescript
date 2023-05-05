@@ -7,6 +7,7 @@
 @deprecated
 //^
 let _ = %raw(`1`)
+        //^
 
 let a = 1
 //^
@@ -57,6 +58,14 @@ type t = {
       //^
 }
 
+type t = {
+  a: promise<int>
+      //^
+}
+
+let _ = list{1, 2}
+        //^
+
 let _ = {...me, age: me.age + 1}
           //^
 
@@ -97,3 +106,27 @@ try {
 | Not_found => assert false
                 //^
 }
+
+open Js.Array2
+//^
+
+include Js
+//^
+
+
+switch [1, 2, 3] {
+//^
+  | [] => true
+//^
+  | _ => false
+    //^
+}
+
+let list = 2
+    //^
+let array = [1]
+    //^
+let catch = 1
+    //^
+let ref = ref(false)
+   //^
