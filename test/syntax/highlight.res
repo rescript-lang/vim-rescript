@@ -130,3 +130,5 @@ let catch = 1
     //^
 let ref = ref(false)
    //^
+let option = None
+    //^

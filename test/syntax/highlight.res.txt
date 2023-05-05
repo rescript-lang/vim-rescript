@@ -285,4 +285,11 @@
         hl_group = "resType",
         hl_group_link = "Type"
       } }
+  }, {
+    col = 7,
+    line = 133,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
+      } }
   } }
