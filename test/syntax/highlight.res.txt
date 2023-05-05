@@ -1,0 +1,210 @@
+{ {
+    col = 3,
+    line = 1,
+    syntax = {}
+  }, {
+    col = 3,
+    line = 4,
+    syntax = {}
+  }, {
+    col = 3,
+    line = 7,
+    syntax = { {
+        hl_group = "resAttribute",
+        hl_group_link = "PreProc"
+      } }
+  }, {
+    col = 3,
+    line = 11,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 9,
+    line = 14,
+    syntax = { {
+        hl_group = "resFloat",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 11,
+    line = 17,
+    syntax = { {
+        hl_group = "resBoolean",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 11,
+    line = 19,
+    syntax = { {
+        hl_group = "resBoolean",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 13,
+    line = 22,
+    syntax = { {
+        hl_group = "resString",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 21,
+    line = 24,
+    syntax = { {
+        hl_group = "resString",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 10,
+    line = 26,
+    syntax = { {
+        hl_group = "resChar",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 13,
+    line = 29,
+    syntax = { {
+        hl_group = "resString",
+        hl_group_link = "Constant"
+      } }
+  }, {
+    col = 10,
+    line = 32,
+    syntax = {}
+  }, {
+    col = 14,
+    line = 34,
+    syntax = { {
+        hl_group = "resOperator",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 14,
+    line = 37,
+    syntax = { {
+        hl_group = "resOperator",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 9,
+    line = 40,
+    syntax = { {
+        hl_group = "resOperator",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 11,
+    line = 43,
+    syntax = { {
+        hl_group = "resOperator",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 11,
+    line = 46,
+    syntax = { {
+        hl_group = "resOperator",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 3,
+    line = 49,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 6,
+    line = 52,
+    syntax = {}
+  }, {
+    col = 9,
+    line = 56,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
+      } }
+  }, {
+    col = 13,
+    line = 60,
+    syntax = {}
+  }, {
+    col = 11,
+    line = 63,
+    syntax = { {
+        hl_group = "resModuleOrVariant",
+        hl_group_link = "Identifier"
+      } }
+  }, {
+    col = 11,
+    line = 66,
+    syntax = { {
+        hl_group = "resPolyVariant",
+        hl_group_link = "Identifier"
+      } }
+  }, {
+    col = 9,
+    line = 69,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 5,
+    line = 72,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 3,
+    line = 77,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 4,
+    line = 79,
+    syntax = { {
+        hl_group = "resModuleChain",
+        hl_group_link = "PreProc"
+      } }
+  }, {
+    col = 3,
+    line = 83,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 3,
+    line = 88,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 3,
+    line = 92,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 5,
+    line = 95,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 19,
+    line = 97,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  } }

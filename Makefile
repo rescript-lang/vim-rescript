@@ -7,3 +7,6 @@ export INMAKE
 
 test:
 	@$(MYVIM) -u ./test/test_all.vim
+
+test-syntax:
+	nvim -l test/test-syntax.lua
