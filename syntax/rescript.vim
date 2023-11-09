@@ -95,6 +95,9 @@ syntax match resInterpolatedStringEscapeSeq "\v\\[\\`ntbrf]" contained
 
 syntax region resString start="\v\"" end="\v\"" contains=resStringEscapeSeq,resUnicodeChar
 
+" Custom Operator
+syntax region resCustomOperator start="\v\\\"" end="\v\""
+
 " Interpolation
 syntax match resInterpolationVariable "\v\$[a-z_][A-Za-z0-0_'$]*" contained
 syntax region resInterpolationBlock matchgroup=resInterpolationDelimiters start="\v\$\{" end="\v\}" contained contains=TOP
@@ -147,5 +150,6 @@ highlight default link resAttribute PreProc
 highlight default link resExtension PreProc
 highlight default link resEncl Keyword
 highlight default link resFunction Function
+highlight default link resCustomOperator String
 
 let b:current_syntax = "rescript"
