@@ -6,9 +6,11 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: rhysd/action-setup-vim@v1
-        with:
-          neovim: true
+      - name: Install packages
+        run: |
+          sudo add-apt-repository ppa:neovim-ppa/stable
+          sudo apt update
+          sudo apt install neovim
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:

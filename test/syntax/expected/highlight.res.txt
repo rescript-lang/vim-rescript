@@ -1,293 +1,269 @@
 { {
-    col = 3,
-    line = 1,
+    col = 1,
+    row = 0,
+    syntax = { {
+        hl_group = "resArrowPipe",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 3,
     syntax = {}
   }, {
-    col = 3,
-    line = 4,
-    syntax = {}
-  }, {
-    col = 3,
-    line = 7,
+    col = 1,
+    row = 6,
     syntax = { {
         hl_group = "resAttribute",
         hl_group_link = "PreProc"
       } }
   }, {
-    col = 11,
-    line = 9,
+    col = 9,
+    row = 8,
     syntax = {}
   }, {
-    col = 3,
-    line = 12,
+    col = 1,
+    row = 11,
     syntax = { {
         hl_group = "resKeyword",
         hl_group_link = "Statement"
       } }
   }, {
+    col = 7,
+    row = 14,
+    syntax = {}
+  }, {
     col = 9,
-    line = 15,
+    row = 17,
     syntax = { {
-        hl_group = "resFloat",
+        hl_group = "resBoolean",
         hl_group_link = "Constant"
       } }
   }, {
-    col = 11,
-    line = 18,
+    col = 9,
+    row = 19,
     syntax = { {
         hl_group = "resBoolean",
         hl_group_link = "Constant"
       } }
   }, {
     col = 11,
-    line = 20,
-    syntax = { {
-        hl_group = "resBoolean",
-        hl_group_link = "Constant"
-      } }
-  }, {
-    col = 13,
-    line = 23,
+    row = 22,
     syntax = { {
         hl_group = "resString",
         hl_group_link = "Constant"
       } }
   }, {
-    col = 21,
-    line = 25,
+    col = 19,
+    row = 24,
     syntax = { {
         hl_group = "resString",
         hl_group_link = "Constant"
       } }
   }, {
-    col = 10,
-    line = 27,
+    col = 8,
+    row = 26,
     syntax = { {
         hl_group = "resChar",
         hl_group_link = "Constant"
       } }
   }, {
-    col = 13,
-    line = 30,
+    col = 11,
+    row = 29,
     syntax = { {
         hl_group = "resString",
         hl_group_link = "Constant"
       } }
   }, {
-    col = 10,
-    line = 33,
+    col = 8,
+    row = 32,
     syntax = {}
   }, {
-    col = 14,
-    line = 35,
-    syntax = { {
-        hl_group = "resOperator",
-        hl_group_link = "Statement"
-      } }
+    col = 12,
+    row = 34,
+    syntax = {}
   }, {
-    col = 14,
-    line = 38,
-    syntax = { {
-        hl_group = "resOperator",
-        hl_group_link = "Statement"
-      } }
+    col = 12,
+    row = 37,
+    syntax = {}
   }, {
-    col = 9,
-    line = 41,
-    syntax = { {
-        hl_group = "resOperator",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 11,
-    line = 44,
-    syntax = { {
-        hl_group = "resOperator",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 11,
-    line = 47,
-    syntax = { {
-        hl_group = "resOperator",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 3,
-    line = 50,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 6,
-    line = 53,
+    col = 7,
+    row = 40,
     syntax = {}
   }, {
     col = 9,
-    line = 57,
-    syntax = { {
-        hl_group = "resType",
-        hl_group_link = "Type"
-      } }
-  }, {
-    col = 9,
-    line = 62,
+    row = 43,
     syntax = {}
   }, {
-    col = 11,
-    line = 66,
-    syntax = { {
-        hl_group = "resType",
-        hl_group_link = "Type"
-      } }
-  }, {
-    col = 13,
-    line = 69,
+    col = 9,
+    row = 46,
     syntax = {}
   }, {
-    col = 11,
-    line = 72,
-    syntax = { {
-        hl_group = "resModuleOrVariant",
-        hl_group_link = "Identifier"
-      } }
-  }, {
-    col = 11,
-    line = 75,
-    syntax = { {
-        hl_group = "resPolyVariant",
-        hl_group_link = "Identifier"
-      } }
-  }, {
-    col = 9,
-    line = 78,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 5,
-    line = 81,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 3,
-    line = 86,
+    col = 1,
+    row = 49,
     syntax = { {
         hl_group = "resKeyword",
         hl_group_link = "Statement"
       } }
   }, {
     col = 4,
-    line = 88,
+    row = 52,
+    syntax = {}
+  }, {
+    col = 7,
+    row = 56,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
+      } }
+  }, {
+    col = 7,
+    row = 61,
+    syntax = {}
+  }, {
+    col = 9,
+    row = 65,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
+      } }
+  }, {
+    col = 11,
+    row = 68,
+    syntax = {}
+  }, {
+    col = 9,
+    row = 71,
+    syntax = { {
+        hl_group = "resModuleOrVariant",
+        hl_group_link = "Identifier"
+      } }
+  }, {
+    col = 9,
+    row = 74,
+    syntax = { {
+        hl_group = "resPolyVariant",
+        hl_group_link = "Identifier"
+      } }
+  }, {
+    col = 7,
+    row = 77,
+    syntax = {}
+  }, {
+    col = 3,
+    row = 80,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 85,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 2,
+    row = 87,
     syntax = { {
         hl_group = "resModuleChain",
         hl_group_link = "PreProc"
       } }
   }, {
-    col = 3,
-    line = 92,
+    col = 1,
+    row = 91,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 96,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 100,
     syntax = { {
         hl_group = "resKeyword",
         hl_group_link = "Statement"
       } }
   }, {
     col = 3,
-    line = 97,
+    row = 103,
     syntax = { {
         hl_group = "resKeyword",
         hl_group_link = "Statement"
       } }
   }, {
-    col = 3,
-    line = 101,
+    col = 17,
+    row = 105,
     syntax = { {
         hl_group = "resKeyword",
         hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 109,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 112,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 116,
+    syntax = { {
+        hl_group = "resKeyword",
+        hl_group_link = "Statement"
+      } }
+  }, {
+    col = 1,
+    row = 118,
+    syntax = {}
+  }, {
+    col = 5,
+    row = 120,
+    syntax = {}
+  }, {
+    col = 5,
+    row = 124,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
       } }
   }, {
     col = 5,
-    line = 104,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 19,
-    line = 106,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 3,
-    line = 110,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 3,
-    line = 113,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 3,
-    line = 117,
-    syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 3,
-    line = 119,
-    syntax = { {
-        hl_group = "resOperator",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 7,
-    line = 121,
-    syntax = { {
-        hl_group = "resArrowPipe",
-        hl_group_link = "Statement"
-      } }
-  }, {
-    col = 7,
-    line = 125,
+    row = 126,
     syntax = { {
         hl_group = "resType",
         hl_group_link = "Type"
       } }
   }, {
-    col = 7,
-    line = 127,
-    syntax = { {
-        hl_group = "resType",
-        hl_group_link = "Type"
-      } }
-  }, {
-    col = 7,
-    line = 129,
+    col = 5,
+    row = 128,
     syntax = { {
         hl_group = "resKeyword",
         hl_group_link = "Statement"
       } }
   }, {
-    col = 6,
-    line = 131,
+    col = 4,
+    row = 130,
     syntax = { {
         hl_group = "resType",
         hl_group_link = "Type"
       } }
   }, {
-    col = 7,
-    line = 133,
+    col = 5,
+    row = 132,
     syntax = { {
         hl_group = "resType",
         hl_group_link = "Type"

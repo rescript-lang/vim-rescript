@@ -1,9 +1,13 @@
 local cwd = vim.fn.getcwd()
 local dir = '/test/syntax/'
+local expected_dir = '/test/syntax/expected'
+
+local FILES = { 'highlight.res' }
 
 local function main(file)
   -- Load syntax file
   local path = cwd .. dir .. file
+
   vim.cmd.edit(path)
   vim.cmd.source(cwd .. '/syntax/rescript.vim')
 
@@ -23,25 +27,23 @@ local function main(file)
 
       local col = start_match - 1 + string.len(pattern)
 
-      local loc = { line = number - 1, col = col }
+      local item =
+        vim.inspect_pos(bufnr, number - 2, col - 2, { syntax = true })
 
-      table.insert(locations, loc)
+      table.insert(
+        locations,
+        { row = item.row, col = item.col, syntax = item.syntax }
+      )
     end
   end
 
-  for _, loc in ipairs(locations) do
-    local item =
-      vim.inspect_pos(bufnr, loc.line - 1, loc.col - 1, { syntax = true })
-    loc.syntax = item.syntax
-  end
+  local output_file = cwd .. expected_dir .. '/' .. file .. '.txt'
 
-  local fd = vim.loop.fs_open(path .. '.txt', 'w', 438)
-  assert(vim.loop.fs_write(fd, vim.inspect(locations), 0))
-  assert(vim.loop.fs_close(fd))
+  local fd = vim.loop.fs_open(output_file, 'w', 438)
+  vim.loop.fs_write(fd, vim.inspect(locations), 0)
+  vim.loop.fs_close(fd)
 end
 
-local files = { 'highlight.res' }
-
-for _, file in ipairs(files) do
+for _, file in ipairs(FILES) do
   main(file)
 end
