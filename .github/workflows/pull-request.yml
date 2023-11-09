@@ -6,10 +6,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: Install packages
-        run: |
-          sudo apt update
-          sudo apt install neovim
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
