@@ -5,6 +5,7 @@
 - Clone the repo
 - `npm install` dependencies
 - `make test` to run the tests
+- `make test-syntax`, require Neovim >= 0.9.0
 
 **Working within VIM**
 
@@ -20,6 +21,20 @@ Plug ~/Projects/vim-rescript
 
 **Integration Specs:**
 For all the informal specs about editor integration & the ReScript platform, check out the [CONTRIBUTING](https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md) file of the rescript-vscode reference implementation.
+
+### Syntax Tests
+
+Syntax tests require Neovim >= 0.9.0
+
+#### Adding new tests
+
+- Create or edit a file at `test/syntax/` directory.
+- Write some code and add a comment in the following format: `//^` below the code. The `^` indicates the capture location. Example:
+  ```rescript
+  let a = true
+          //^
+  ```
+- Run `make test-syntax`
 
 ### Use custom rescript-editor-support.exe
 
