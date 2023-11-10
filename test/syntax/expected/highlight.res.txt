@@ -2,13 +2,16 @@
     col = 1,
     row = 0,
     syntax = { {
-        hl_group = "resArrowPipe",
-        hl_group_link = "Statement"
+        hl_group = "resAttribute",
+        hl_group_link = "PreProc"
       } }
   }, {
     col = 1,
     row = 3,
-    syntax = {}
+    syntax = { {
+        hl_group = "resExtension",
+        hl_group_link = "PreProc"
+      } }
   }, {
     col = 1,
     row = 6,
@@ -19,7 +22,10 @@
   }, {
     col = 9,
     row = 8,
-    syntax = {}
+    syntax = { {
+        hl_group = "resExtension",
+        hl_group_link = "PreProc"
+      } }
   }, {
     col = 1,
     row = 11,
@@ -76,7 +82,10 @@
   }, {
     col = 8,
     row = 32,
-    syntax = {}
+    syntax = { {
+        hl_group = "resExtension",
+        hl_group_link = "PreProc"
+      } }
   }, {
     col = 12,
     row = 34,
@@ -112,24 +121,36 @@
     col = 7,
     row = 56,
     syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      }, {
         hl_group = "resType",
         hl_group_link = "Type"
       } }
   }, {
     col = 7,
     row = 61,
-    syntax = {}
-  }, {
-    col = 9,
-    row = 65,
     syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      }, {
         hl_group = "resType",
         hl_group_link = "Type"
       } }
   }, {
+    col = 9,
+    row = 65,
+    syntax = { {
+        hl_group = "resFunction",
+        hl_group_link = "Identifier"
+      } }
+  }, {
     col = 11,
     row = 68,
-    syntax = {}
+    syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      } }
   }, {
     col = 9,
     row = 71,
@@ -159,13 +180,16 @@
     col = 1,
     row = 85,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resRepeat",
         hl_group_link = "Statement"
       } }
   }, {
     col = 2,
     row = 87,
     syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      }, {
         hl_group = "resModuleChain",
         hl_group_link = "PreProc"
       } }
@@ -173,50 +197,53 @@
     col = 1,
     row = 91,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resRepeat",
         hl_group_link = "Statement"
       } }
   }, {
     col = 1,
     row = 96,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resException",
         hl_group_link = "Statement"
       } }
   }, {
     col = 1,
     row = 100,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resException",
         hl_group_link = "Statement"
       } }
   }, {
     col = 3,
     row = 103,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resException",
         hl_group_link = "Statement"
       } }
   }, {
     col = 17,
     row = 105,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      }, {
+        hl_group = "resException",
         hl_group_link = "Statement"
       } }
   }, {
     col = 1,
     row = 109,
     syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
+        hl_group = "resInclude",
+        hl_group_link = "PreProc"
       } }
   }, {
     col = 1,
     row = 112,
     syntax = { {
-        hl_group = "resKeyword",
-        hl_group_link = "Statement"
+        hl_group = "resInclude",
+        hl_group_link = "PreProc"
       } }
   }, {
     col = 1,
@@ -228,11 +255,17 @@
   }, {
     col = 1,
     row = 118,
-    syntax = {}
+    syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      } }
   }, {
     col = 5,
     row = 120,
-    syntax = {}
+    syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      } }
   }, {
     col = 5,
     row = 124,
@@ -251,7 +284,7 @@
     col = 5,
     row = 128,
     syntax = { {
-        hl_group = "resKeyword",
+        hl_group = "resException",
         hl_group_link = "Statement"
       } }
   }, {
