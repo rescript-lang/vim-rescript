@@ -15,17 +15,13 @@ Plugin Website: <https://github.com/rescript-lang/vim-rescript>
 CONTENTS                                                             *rescript*
 
 	   Intro ......................... |rescript-introduction|
-	   Config ........................ |rescript-config|
-           omnicomplete................... |rescript-omnicomplete|
            COC Config..................... |rescript-coc|
-	   Variables ..................... |rescript-variables|
-	   Commands ...................... |rescript-commands|
 
 
 ===============================================================================
 INTRODUCTION                                            *rescript-introduction*
 
-This plugin provides important features to work on ReScript projects, such as:
+This plugin provides basic features to work on ReScript projects, such as:
 
 - Syntax highlighting
 - Fileype detection
@@ -43,7 +39,7 @@ In case you want to use ReScript with |coc-nvim|, open your config file with
       "module": "rescript-language-server",
       "args": ["--node-ipc"],
       "filetypes": ["rescript"],
-      "rootPatterns": ["bsconfig.json", "bsconfig.json"]
+      "rootPatterns": ["rescript.json", "bsconfig.json"]
     }
   }
 <

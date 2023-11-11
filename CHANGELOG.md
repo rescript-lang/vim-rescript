@@ -4,11 +4,12 @@
 
 **Breaking Changes:**
 
-- Removed Server and Vim Commands
+- Remove Server and Vim Commands
+  - The ReScript Language Server will now be shipped as a dedicated npm package [rescript-language-server](https://github.com/rescript-lang/rescript-vscode/tree/master/server#rescript-language-server)
 
 **Improvements:**
 
-- Improve syntax highlighting for escaped backticks in interpolated strings ([#55](https://github.com/rescript-lang/vim-rescript/pull/55)) 
+- Improve syntax highlighting for escaped backticks in interpolated strings ([#55](https://github.com/rescript-lang/vim-rescript/pull/55))
 - Highlight improvements ([#69](https://github.com/rescript-lang/vim-rescript/pull/69))
 
 ## 2.1.0
