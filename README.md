@@ -52,7 +52,7 @@ With [Lazy.nvim](https://github.com/folke/lazy.nvim):
 
 First you need install the language server for ReScript from npm
 
-> **Tip**
+> **Note**
 > If you are using [mason.nvim](https://github.com/williamboman/mason.nvim) you can install the ReScript Language Server using the command `MasonInsall rescript-language-server`
 
 ```sh
