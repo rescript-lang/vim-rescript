@@ -1,6 +1,10 @@
 # Changelog
 
-## master
+## 3.0.0
+
+**Breaking Changes:**
+
+- Removed Server and Vim Commands
 
 **Improvements:**
 

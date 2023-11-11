@@ -10,15 +10,7 @@ jobs:
         with:
           neovim: true
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm install
       - name: Test with neovim
-        run: |
-          nvim --version
-          vim --version
-          make test
+        run: nvim --version
       - name: Test syntax
         run: make test-syntax
