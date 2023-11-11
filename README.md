@@ -1,7 +1,5 @@
 # vim-rescript
 
-**This is the official vim plugin for ReScript.**
-
 Vim runtime files for ReScript.
 
 > If you are experiencing any troubles, open an issue or visit our [Forum](https://forum.rescript-lang.org) and ask for guidance.
