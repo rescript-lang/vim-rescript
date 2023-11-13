@@ -6,6 +6,7 @@
 
 - Remove vendored ReScript LS and remove native Vim Commands (e.g. `:RescriptBuild`, etc)
   - The ReScript Language Server will now be shipped as a dedicated npm package [rescript-language-server](https://github.com/rescript-lang/rescript-vscode/tree/master/server#rescript-language-server)
+  - Migrate to the official language server as described in our README instructions
 
 **Improvements:**
 
