@@ -17,9 +17,6 @@ Plug ~/Projects/vim-rescript
 - Run `:PlugInstall` (you'll not see the plugin in the interactive vim-plug list, because it is a local project)
 - You can open and edit functionality in any plugin file. After any changes, just run `:so %` in the same buffer to source the current file, then proceed to do your manual tests
 
-**Integration Specs:**
-For all the informal specs about editor integration & the ReScript platform, check out the [CONTRIBUTING](https://github.com/rescript-lang/rescript-vscode/blob/master/CONTRIBUTING.md) file of the rescript-vscode reference implementation.
-
 ### Syntax Tests
 
 Syntax tests require Neovim >= 0.9.0

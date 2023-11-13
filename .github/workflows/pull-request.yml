@@ -10,7 +10,7 @@ jobs:
         with:
           neovim: true
       - uses: actions/checkout@v1
-      - name: Test with neovim
+      - name: Neovim Version
         run: nvim --version
       - name: Test syntax
         run: make test-syntax

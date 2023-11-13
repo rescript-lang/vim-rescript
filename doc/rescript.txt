@@ -14,8 +14,8 @@ Plugin Website: <https://github.com/rescript-lang/vim-rescript>
 ===============================================================================
 CONTENTS                                                             *rescript*
 
-	   Intro ......................... |rescript-introduction|
-           COC Config..................... |rescript-coc|
+	  Intro ......................... |rescript-introduction|
+	  COC Config..................... |rescript-coc|
 
 
 ===============================================================================
