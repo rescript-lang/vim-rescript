@@ -29,7 +29,7 @@ NeoBundle 'rescript-lang/vim-rescript'
 
 ```lua
 -- Lazy.nvim
-{ 'rescript-lang/vim-rescript' }
+{ 'rescript-lang/vim-rescript', ft="rescript" }
 ```
 
 You can also pin your installation to specific tags (check our releases [here](https://github.com/rescript-lang/vim-rescript/releases)):
