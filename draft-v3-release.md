@@ -27,7 +27,7 @@ installation and setup to get all the features.
 npm install -g @rescript/language-server
 ```
 
-## Noevim LSP builtin users
+## Neovim LSP builtin users
 
 Install nvim-lspconfig package.
 
