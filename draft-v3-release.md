@@ -9,6 +9,7 @@ We only provide the Vim runtime files that provide the following features:
 1. Indentation
 2. Syntax Highlight
 3. Filetype detection
+4. Commenting support (Neovim v10 has a built-in commenting)
 
 ## Breaking Changes
 
@@ -27,7 +28,7 @@ installation and setup to get all the features.
 npm install -g @rescript/language-server
 ```
 
-## Noevim LSP builtin users
+## Neovim LSP builtin users
 
 Install nvim-lspconfig package.
 
