@@ -56,14 +56,14 @@
     row = 22,
     syntax = { {
         hl_group = "resString",
-        hl_group_link = "Constant"
+        hl_group_link = "String"
       } }
   }, {
     col = 19,
     row = 24,
     syntax = { {
         hl_group = "resString",
-        hl_group_link = "Constant"
+        hl_group_link = "String"
       } }
   }, {
     col = 8,
@@ -77,7 +77,7 @@
     row = 29,
     syntax = { {
         hl_group = "resString",
-        hl_group_link = "Constant"
+        hl_group_link = "String"
       } }
   }, {
     col = 8,
@@ -142,7 +142,7 @@
     row = 65,
     syntax = { {
         hl_group = "resFunction",
-        hl_group_link = "Identifier"
+        hl_group_link = "Function"
       } }
   }, {
     col = 11,
@@ -156,14 +156,14 @@
     row = 71,
     syntax = { {
         hl_group = "resModuleOrVariant",
-        hl_group_link = "Identifier"
+        hl_group_link = "Function"
       } }
   }, {
     col = 9,
     row = 74,
     syntax = { {
         hl_group = "resPolyVariant",
-        hl_group_link = "Identifier"
+        hl_group_link = "Function"
       } }
   }, {
     col = 7,
