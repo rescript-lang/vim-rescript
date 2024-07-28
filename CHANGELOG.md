@@ -12,6 +12,7 @@
 
 - Improve syntax highlighting for escaped backticks in interpolated strings ([#55](https://github.com/rescript-lang/vim-rescript/pull/55))
 - Highlight improvements ([#69](https://github.com/rescript-lang/vim-rescript/pull/69))
+- Support `commentstring`. https://github.com/rescript-lang/vim-rescript/pull/76
 
 ## 2.1.0
 
