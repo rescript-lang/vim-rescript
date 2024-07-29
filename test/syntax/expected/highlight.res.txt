@@ -301,4 +301,36 @@
         hl_group = "resType",
         hl_group_link = "Type"
       } }
+  }, {
+    col = 9,
+    row = 135,
+    syntax = {}
+  }, {
+    col = 10,
+    row = 138,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
+      } }
+  }, {
+    col = 10,
+    row = 141,
+    syntax = { {
+        hl_group = "resType",
+        hl_group_link = "Type"
+      } }
+  }, {
+    col = 21,
+    row = 144,
+    syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      } }
+  }, {
+    col = 7,
+    row = 147,
+    syntax = { {
+        hl_group = "resNone",
+        hl_group_link = "resNone"
+      } }
   } }
