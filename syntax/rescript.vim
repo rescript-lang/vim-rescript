@@ -18,7 +18,7 @@ syntax keyword resException try catch exception assert
 syntax keyword resKeyword async await
 
 " Types
-syntax keyword resType bool int float char string unit promise
+syntax keyword resType bool int float char string unit promise dict result
 syntax keyword resType array option ref exn format
 syntax match resType "list{\@!"
 
@@ -47,6 +47,8 @@ syntax match resOperator "\v\@"
 
 syntax match resOperator "\v\!"
 syntax match resOperator "\v\&"
+syntax match resOperator "\v\:\>"
+syntax match resOperator "\v\.\.\."
 
 " Delimiter
 syntax match resDelimiter "\v\|"
@@ -101,8 +103,7 @@ syntax region resCustomOperator start="\v\\\"" end="\v\""
 " Interpolation
 syntax match resInterpolationVariable "\v\$[a-z_][A-Za-z0-0_'$]*" contained
 syntax region resInterpolationBlock matchgroup=resInterpolationDelimiters start="\v\$\{" end="\v\}" contained contains=TOP
-syntax region resString start="\v`" end="\v`" contains=resInterpolationBlock,resInterpolatedStringEscapeSeq
-syntax region resString start="\v[a-z]`" end="\v`" contains=resInterpolationBlock,resInterpolationVariable,resInterpolatedStringEscapeSeq
+syn region  resString start=+`+  skip=+\\\\\|\\`+  end=+`+	contains=resInterpolationBlock,resInterpolationVariable,resInterpolatedStringEscapeSeq
 
 " Polymorphic variants
 syntax match resPolyVariant "\v#[A-za-z][A-Za-z0-9_'$]*"
