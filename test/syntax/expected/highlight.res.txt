@@ -150,6 +150,9 @@
     syntax = { {
         hl_group = "resNone",
         hl_group_link = "resNone"
+      }, {
+        hl_group = "resOperator",
+        hl_group_link = "Operator"
       } }
   }, {
     col = 9,
@@ -332,5 +335,8 @@
     syntax = { {
         hl_group = "resNone",
         hl_group_link = "resNone"
+      }, {
+        hl_group = "resOperator",
+        hl_group_link = "Operator"
       } }
   } }
