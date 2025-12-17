@@ -64,9 +64,8 @@ The binary is called `rescript-language-server`
 Install the [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) package and setup the LSP
 
 ```lua
-local lspconfig = require('lspconfig')
-
-lspconfig.rescriptls.setup{}
+vim.lsp.config("rescriptls", {})
+vim.lsp.enable("rescriptls")
 ```
 
 For more details, see [server configuration](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rescriptls)
