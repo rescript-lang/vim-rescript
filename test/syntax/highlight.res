@@ -132,3 +132,18 @@ let ref = ref(false)
    //^
 let option = None
     //^
+
+let _ = sql`select * from table`
+        //^
+
+type a = dict<string>
+         //^
+
+type b = result<int, string>
+         //^
+
+let _ = (x: r1) => (x :> r2)
+                    //^
+
+foo(1, ...)
+      //^
