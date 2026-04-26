@@ -56,6 +56,8 @@ First you need install the language server for ReScript from npm
 > **Note**
 > If you are using [mason.nvim](https://github.com/williamboman/mason.nvim) you can install the ReScript Language Server using the command `MasonInstall rescript-language-server`
 
+Or intall using npm:
+
 ```sh
 npm install -g @rescript/language-server
 ```
@@ -71,7 +73,7 @@ vim.lsp.config("rescriptls", {})
 vim.lsp.enable("rescriptls")
 ```
 
-For more details, see [server configuration](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#rescriptls)
+For more details, see [server configuration](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#rescriptls)
 
 ### COC (Vim or Neovim)
 
@@ -90,6 +92,51 @@ After the installation, open your coc config (`:CocConfig`) and add the followin
   }
 }
 ```
+
+## Tree Sitter
+
+[Tree-sitter](https://tree-sitter.github.io/tree-sitter/) is a parser generator tool and incremental parsing library. Unlike regex-based syntax highlighting, Tree-sitter builds a full concrete syntax tree for a source file and updates it incrementally as you type. In Neovim, this enables more accurate, context-aware highlighting, smarter text objects, and structural navigation — none of which are possible with pattern matching alone.
+
+### Syntax Highlighting Mechanisms in Neovim
+
+Neovim supports three distinct highlighting mechanisms that can be used independently or layered on top of each other:
+
+1. **Regex-based syntax (`:h syntax`)** — The classic Vim approach. Syntax rules are defined as regex patterns in `.vim` files. This is what `vim-rescript` provides by default and works in both Vim and Neovim without any additional dependencies.
+
+2. **Tree-sitter (`:h treesitter`)** — Available since Neovim 0.5. Uses a parsed AST instead of regex patterns, producing more precise and context-aware highlighting. Requires a compiled parser for each language. This plugin ships Tree-sitter highlight queries in the `queries/rescript/` directory, which Neovim loads automatically once a ReScript parser is installed.
+
+3. **LSP semantic tokens (`:h lsp-semantic_tokens`)** — Available since Neovim 0.9. The language server sends token data with semantic information about each symbol (e.g. distinguishing a local variable from a type alias or a module name). These are applied on top of Tree-sitter or regex highlights and provide the highest level of semantic accuracy.
+
+When all three are active, they layer in that order: regex forms the base, Tree-sitter overrides it with structural context, and LSP semantic tokens refine it further with type information from the compiler.
+
+### Installing the ReScript Parser
+
+Neovim does not ship a ReScript parser. You need to install one separately.
+
+[`nvim-treesitter`](https://github.com/nvim-treesitter/nvim-treesitter) is archived, meaning it no longer receives updates, but it still works and remains the most common way to install and manage parsers. Install it as a regular plugin.
+
+Now, overwrite the parser config information to install the latest version of parser.
+
+```lua
+---@type ParserInfo
+local rescript_parser = {
+  install_info = {
+    revision = 'v6.0.0',
+    url = 'https://github.com/rescript-lang/tree-sitter-rescript',
+  },
+}
+
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'TSUpdate',
+  callback = function()
+    require('nvim-treesitter.parsers').rescript = rescript_parser
+  end,
+})
+
+require('nvim-treesitter.parsers').rescript = rescript_parser
+```
+
+Now, open nvim and install using the command `TSInstall rescript`. Once a parser is installed, Neovim loads the Tree-sitter queries from this plugin automatically when you open a `.res` or `.resi` file.
 
 ## Credits
 
