@@ -2,17 +2,31 @@
 
 ## master
 
+## 3.0.0
+
 **Breaking Changes:**
 
-- Remove vendored ReScript LS and remove native Vim Commands (e.g. `:RescriptBuild`, etc)
-  - The ReScript Language Server will now be shipped as a dedicated npm package [rescript-language-server](https://github.com/rescript-lang/rescript-vscode/tree/master/server#rescript-language-server)
+- Remove vendored ReScript language server (LS) and native Vim commands (e.g. `:RescriptBuild`, etc) ([#72](https://github.com/rescript-lang/vim-rescript/pull/72))
+  - The ReScript Language Server is now shipped as a dedicated npm package [rescript-language-server](https://github.com/rescript-lang/rescript-vscode/tree/master/server#rescript-language-server)
   - Migrate to the official language server as described in our README instructions
 
 **Improvements:**
 
-- Improve syntax highlighting for escaped backticks in interpolated strings ([#55](https://github.com/rescript-lang/vim-rescript/pull/55))
-- Highlight improvements ([#69](https://github.com/rescript-lang/vim-rescript/pull/69)) and https://github.com/rescript-lang/vim-rescript/pull/78
-- Support `commentstring`. https://github.com/rescript-lang/vim-rescript/pull/76
+- ReScript v11 syntax changes ([#78](https://github.com/rescript-lang/vim-rescript/pull/78))
+- Add `commentstring` support ([#76](https://github.com/rescript-lang/vim-rescript/pull/76))
+- Highlight improvements ([#69](https://github.com/rescript-lang/vim-rescript/pull/69))
+- Add syntax highlighting for `async`/`await` ([#65](https://github.com/rescript-lang/vim-rescript/pull/65))
+- Support escape sequences in backtick strings ([#55](https://github.com/rescript-lang/vim-rescript/pull/55))
+- Add manual installation instructions for Packer users ([#62](https://github.com/rescript-lang/vim-rescript/pull/62))
+
+**Documentation:**
+
+- Update LSP setup ([#79](https://github.com/rescript-lang/vim-rescript/pull/79))
+
+**Tests:**
+
+- Add syntax tests ([#71](https://github.com/rescript-lang/vim-rescript/pull/71))
+- Fix tests ([#77](https://github.com/rescript-lang/vim-rescript/pull/77))
 
 ## 2.1.0
 
