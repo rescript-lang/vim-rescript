@@ -28,8 +28,11 @@ NeoBundle 'rescript-lang/vim-rescript'
 ```
 
 ```lua
+-- vim.pack builtin, require neovim 0.12+
+vim.pack.add { 'https://github.com/rescript-lang/vim-rescript' }
+
 -- Lazy.nvim
-{ 'rescript-lang/vim-rescript', ft="rescript" }
+{ 'rescript-lang/vim-rescript', ft = 'rescript' }
 ```
 
 You can also pin your installation to specific tags (check our releases [here](https://github.com/rescript-lang/vim-rescript/releases)):
@@ -37,13 +40,13 @@ You can also pin your installation to specific tags (check our releases [here](h
 With Plug:
 
 ```vim
-Plug 'rescript-lang/vim-rescript', {'tag': 'v2.1.0'}
+Plug 'rescript-lang/vim-rescript', {'tag': 'v3.0.0'}
 ```
 
 With [Lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
-{ 'rescript-lang/vim-rescript', tag = "v2.1.0" }
+{ 'rescript-lang/vim-rescript', tag = "v3.0.0" }
 ```
 
 ## Setup LSP
