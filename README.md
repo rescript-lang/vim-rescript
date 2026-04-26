@@ -123,6 +123,7 @@ local rescript_parser = {
   install_info = {
     revision = 'v6.0.0',
     url = 'https://github.com/rescript-lang/tree-sitter-rescript',
+    queries = 'queries/'
   },
 }
 
