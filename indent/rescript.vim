@@ -39,8 +39,6 @@ function! RescriptIndent(lnum)
     return 0
   endif
 
-  echom getline(l:prevlnum)
-
   " Prev and current line with line-comments removed
   let l:prevl = substitute(getline(l:prevlnum), '//.*$', '', '')
   let l:thisl = substitute(getline(a:lnum), '//.*$', '', '')
